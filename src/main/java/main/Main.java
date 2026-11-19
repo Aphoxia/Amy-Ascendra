@@ -1,29 +1,40 @@
 package main;
 
 
+import Utility.Utilities;
 import input.KeyBoardInput;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
 public class Main extends Application {
+
+    private KeyBoardInput keyBoardInput;
+    private Game game;
+
+
     @Override
     public void start(Stage primaryStage) throws Exception {
-        //Thanks Bro code and Kaarin Gaming (The goat) for turtorial xD
+
+        //Thanks Bro code and Kaarin Gaming (The goats) for tutorial xD
         Stage stage = new Stage();
 
         Group root = new Group();
-        Scene scene = new Scene(root , 1280, 720);
+        Scene scene = new Scene(root , Utilities.HORIZONTAL_RESOLUTION, Utilities.VERTICAL_RESOLUTION);
         scene.setFill(Color.BLACK);
 
+        //Canvas Setup
+        //CANVAS IS IDEAL FOR GAME SO TY
+        Canvas canvas = new Canvas(Utilities.HORIZONTAL_RESOLUTION, Utilities.VERTICAL_RESOLUTION);
+        root.getChildren().add(canvas);
+        game = new Game(canvas);
+
         //Keyboard Input Setup
-        KeyBoardInput keyBoardInput = new KeyBoardInput();
+        keyBoardInput = new KeyBoardInput();
         keyBoardInput.attachTo(scene);
 
         //Stage Settings
@@ -36,8 +47,11 @@ public class Main extends Application {
         //stage.getIcons().add(icon);
 
         stage.show();
+        game.start();
+        // START GAME LOOP
 
     }
+
     public static void main(String[] args) {
         launch(args);
     }

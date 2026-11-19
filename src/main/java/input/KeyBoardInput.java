@@ -3,57 +3,49 @@ package input;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import States.GameState;
+
+
+import java.util.EnumSet;
+import java.util.Set;
 
 public class KeyBoardInput {
-    //set the Starting State;
-    private GameState gameState = GameState.MENU;
+
+    private static volatile KeyBoardInput instance;
+
+    private final Set<KeyCode> heldKeys = EnumSet.noneOf(KeyCode.class);
+
+
+    public KeyBoardInput(){
+        instance = this;
+    }
+    public static KeyBoardInput getInstance() {
+        return instance;
+    }
 
     public void attachTo(Scene scene) {
-//        scene.addEventFilter(KeyEvent.KEY_TYPED, this::keyTyped);
-//        scene.addEventFilter(KeyEvent.KEY_RELEASED, this::keyReleased);
+        scene.addEventFilter(KeyEvent.KEY_TYPED, this::keyTyped);
+        scene.addEventFilter(KeyEvent.KEY_RELEASED, this::keyReleased);
         scene.addEventFilter(KeyEvent.KEY_PRESSED, this::keyPressed);
     }
 
-    public void setGameState(GameState state) {
-        this.gameState = state;
+    public boolean isHeld(KeyCode code) {
+        return code != null && heldKeys.contains(code);
     }
-
-    public GameState getGameState() {
-        return gameState;
+    public void clearHeldKeys() {
+        heldKeys.clear();
     }
-
-//    public void keyTyped(KeyEvent e) {
-//        if (gameState == GameState.MENU) {
-//            // Menu text/typed handling if needed
-//        } else if (gameState == GameState.PLAYING) {
-//            // Game typed handling if needed
-//        }
-//    }
-//
-//    public void keyReleased(KeyEvent e) {
-//        if (gameState == GameState.MENU) {
-//            // Menu key-release handling
-//        } else if (gameState == GameState.PLAYING) {
-//            if (e.getCode() == KeyCode.W || e.getCode() == KeyCode.UP) {
-//                System.out.println("[PLAYING] Released UP/W");
-//            }
-//        }
-//    }
-
+    public void keyTyped(KeyEvent e) {
+        //CURRENTLY DOES NOTHING
+    }
+    public void keyReleased(KeyEvent e) {
+        KeyCode code = e.getCode();
+        if (code != null) heldKeys.remove(code);
+    }
     public void keyPressed(KeyEvent e) {
-        if (gameState == GameState.MENU) {
-            if (e.getCode() == KeyCode.ENTER) {
-                System.out.println("[MENU] Pressed ENTER -> Starting game!");
-                gameState = GameState.PLAYING;
-            }
-        } else if (gameState == GameState.PLAYING) {
-            if (e.getCode() == KeyCode.W || e.getCode() == KeyCode.UP) {
-                System.out.println("[PLAYING] Holding/Pressing UP/W");
-            } else if (e.getCode() == KeyCode.ESCAPE) {
-                System.out.println("[PLAYING] Pressed ESCAPE -> Back to menu");
-                gameState = GameState.MENU;
-            }
-        }
+        KeyCode code = e.getCode();
+        if (code != null) heldKeys.add(code);
+
+
+
     }
 }
