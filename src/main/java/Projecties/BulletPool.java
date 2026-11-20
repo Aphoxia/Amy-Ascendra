@@ -16,16 +16,16 @@ public class BulletPool {
         }
     }
 
-    public Bullet obtain(BulletType type, double x, double y, double speed ,double angleDeg , double acceleration) {
+    public Bullet obtain(BulletType type, double x, double y, double speed ,double angleDeg , double acceleration , boolean playerbullet) {
         for (Bullet bullet : bullets) {
             if (!bullet.isActive()) {
-                bullet.reset(type, x, y, speed , angleDeg , acceleration);
+                bullet.reset(type, x, y, speed , angleDeg , acceleration , playerbullet);
                 return bullet;
             }
         }
 
         Bullet created = new Bullet();
-        created.reset(type, x, y, speed , angleDeg , acceleration);
+        created.reset(type, x, y, speed , angleDeg , acceleration , playerbullet );
         bullets.add(created);
         return created;
     }

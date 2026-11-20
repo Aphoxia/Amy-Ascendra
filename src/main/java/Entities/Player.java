@@ -1,5 +1,7 @@
 package Entities;
 
+import Projecties.BulletType;
+import Utility.GameTimer;
 import Utility.Utilities;
 import input.KeyBoardInput;
 import javafx.scene.canvas.GraphicsContext;
@@ -9,6 +11,7 @@ import javafx.scene.paint.Color;
 
 public class Player extends Entity{
 
+
     //LOGIC
     private float movementSpeed = 200f;
     private int xDir = 0;
@@ -16,10 +19,14 @@ public class Player extends Entity{
     private boolean isMoving;
     private boolean left,right,up,down;
 
+    //TIMER
+    private final float firerate = .1f;
+    private final GameTimer fireCooldown = GameTimer.every(firerate);
 
 
-    public Player(float x , float y , float size , float hitboxPercentage){
-        super(x,y,size,hitboxPercentage);
+
+    public Player(float x , float y , float size , float hitboxPercentage , BulletSpawner bulletSpawner){
+        super(x,y,size,hitboxPercentage,bulletSpawner);
         left = false;
         right = false;
         up = false;
@@ -29,6 +36,7 @@ public class Player extends Entity{
     @Override
     public void update(double dt) {
         updatePos(dt);
+        shoot(dt);
     }
 
 
@@ -36,6 +44,8 @@ public class Player extends Entity{
     public void render(GraphicsContext gc) {
         double drawX = Math.round(x);
         double drawY = Math.round(y);
+
+
 
 
         gc.setFill(Color.CYAN);
@@ -57,6 +67,8 @@ public class Player extends Entity{
 
     private void updatePos(double dt) {
 
+
+
         KeyBoardInput input = KeyBoardInput.getInstance();
         up = input.isHeld(KeyCode.W) ;
         down = input.isHeld(KeyCode.S) ;
@@ -67,6 +79,8 @@ public class Player extends Entity{
         xDir = (right ? 1 : 0) - (left ? 1 : 0);
         yDir = (down ? 1 : 0) - (up ? 1 : 0);
         isMoving = (xDir != 0 || yDir != 0);
+
+
 
         if (!isMoving) return;
 
@@ -79,6 +93,16 @@ public class Player extends Entity{
         //TEST
         System.out.println(Utilities.Distance(movementSpeed * norm * xDir , movementSpeed * norm * yDir));
 
+    }
+
+    private void shoot(double dt){
+
+        if (fireCooldown.update(dt)) {
+            double random = -85 + (Math.random() * -10);
+            this.bulletSpawner.spawnAngle(BulletType.Player_Bullet1, x - 16, y, 1000, random, 0, true);
+            random = -85 + (Math.random() * -10);
+            this.bulletSpawner.spawnAngle(BulletType.Player_Bullet2, x + 32, y, 1000, random, 0, true);
+        }
     }
 
     //GETTER SETTER FOR TESTING (WHY I HAVE TO WRITE TEST)

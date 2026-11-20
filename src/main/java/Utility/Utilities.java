@@ -20,4 +20,8 @@ public class Utilities {
     public static float Distance(float x , float y){
         return (float) Math.sqrt(Math.pow(x,2) + Math.pow(y,2));
     }
+
+    public static float Random(float x , float y){
+        return (float) (x + (Math.random() * (y - x)));
+    }
 }

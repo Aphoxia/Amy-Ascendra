@@ -28,8 +28,14 @@ public class Game extends AnimationTimer{
     private final GraphicsContext gc;
 
     private Player player; //There only 1 player lol
+
+    //region TEST
     private BulletSpawner bulletSpawner;
     private BulletPool bulletPool;
+    //endregion
+
+    private BulletSpawner playerbulletSpawner;
+    private BulletPool playerbulletPool;
 
 
     //FPS STUFF
@@ -49,9 +55,11 @@ public class Game extends AnimationTimer{
     }
 
     private void initClasses(){
-        player = new Player((float) Utilities.HORIZONTAL_RESOLUTION / 2 , (float) Utilities.VERTICAL_RESOLUTION * 6 / 8 , 15 , .5f);
         bulletPool = new BulletPool(8192);
         bulletSpawner = new BulletSpawner(bulletPool);
+        playerbulletPool = new BulletPool(1024);
+        playerbulletSpawner = new BulletSpawner(playerbulletPool);
+        player = new Player((float) Utilities.HORIZONTAL_RESOLUTION / 2 , (float) Utilities.VERTICAL_RESOLUTION * 6 / 8 , 16 , .5f , playerbulletSpawner);
     }
 
 
@@ -113,6 +121,7 @@ public class Game extends AnimationTimer{
         gc.fillRect(0, 0, width, height);
 
         player.render(gc);
+        playerbulletPool.renderAll(gc);
         bulletPool.renderAll(gc);
 
     }
@@ -140,7 +149,8 @@ public class Game extends AnimationTimer{
                     30,
                     120,
                     0 + ringStartAngle,
-                    0
+                    0,
+                    false
             );
 
             ringStartAngle += 25;         // rotate pattern slightly each burst
@@ -157,7 +167,8 @@ public class Game extends AnimationTimer{
                     50,
                     200,
                     0 + ringStartAngle,
-                    0
+                    0,
+                    false
             );
 
             ringStartAngle += 45;         // rotate pattern slightly each burst
@@ -167,6 +178,7 @@ public class Game extends AnimationTimer{
 
 
         bulletPool.updateAll(dt);
+        playerbulletPool.updateAll(dt);
     }
 
     //GETTER SETTER

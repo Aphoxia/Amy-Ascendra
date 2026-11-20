@@ -8,7 +8,9 @@ import javafx.scene.paint.Paint;
 public enum BulletType {
     //PLAYER_BASIC(14.0, 5.0,   Color.WHITE),
     ENEMY_ORB1(32, 16, "Sprite-0001.png" , Color.ORANGE),
-    ENEMY_ORB2(16, 8, "Test2.png" , Color.ORANGE);
+    ENEMY_ORB2(16, 8, "Test2.png" , Color.ORANGE),
+    Player_Bullet1(16, 16, "Test3.png" , Color.PURPLE),
+    Player_Bullet2(16, 16, "Test4.png" , Color.PURPLE);
 
     public final double visualSize;
     public final double hitRadius;

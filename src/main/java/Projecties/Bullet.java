@@ -7,6 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Bullet {
+        private boolean playerBullet;
         public boolean active = false;
         private double x, y, speed , currentSpeed, angleDeg, acceleration;
 
@@ -26,7 +27,7 @@ public class Bullet {
         }
     }
 
-    public void reset(BulletType type, double x, double y, double speed ,double angleDeg , double acceleration) {
+    public void reset(BulletType type, double x, double y, double speed ,double angleDeg , double acceleration ,boolean playerBullet) {
         this.type = type;
         this.x = x;
         this.y = y;
@@ -35,6 +36,7 @@ public class Bullet {
         this.angleDeg = angleDeg;
         this.acceleration = acceleration;
         this.active = true;
+        this.playerBullet = playerBullet;
     }
 
     public void render(GraphicsContext gc) {
