@@ -14,7 +14,6 @@ public class KeyBoardInput {
 
     private final Set<KeyCode> heldKeys = EnumSet.noneOf(KeyCode.class);
 
-
     public KeyBoardInput(){
         instance = this;
     }
@@ -34,9 +33,7 @@ public class KeyBoardInput {
     public void clearHeldKeys() {
         heldKeys.clear();
     }
-    public void keyTyped(KeyEvent e) {
-        //CURRENTLY DOES NOTHING
-    }
+
     public void keyReleased(KeyEvent e) {
         KeyCode code = e.getCode();
         if (code != null) heldKeys.remove(code);
@@ -44,8 +41,8 @@ public class KeyBoardInput {
     public void keyPressed(KeyEvent e) {
         KeyCode code = e.getCode();
         if (code != null) heldKeys.add(code);
-
-
-
+    }
+    public void keyTyped(KeyEvent e) {
+        //CURRENTLY DOES NOTHING
     }
 }

@@ -5,5 +5,6 @@ public enum GameState {
     PLAYING,
     GAMEOVER,
     WIN
+
     // Impliment later
 }

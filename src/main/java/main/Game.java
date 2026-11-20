@@ -6,21 +6,21 @@
 
 package main;
 
-import Entities.BulletSpawner;
+import Projecties.BulletSpawner;
 import Entities.Player;
 import Projecties.BulletPool;
 import Projecties.BulletType;
-import Utility.Utilities;
+import Utils.Settings;
+import Utils.Utility;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 public class Game extends AnimationTimer{
     //MAIN GAME CLASS INIT ALL BOSS PLAYER AND STUFF HERE
-    private static final double TARGET_UPS = Utilities.UPS;
-    private static final double TARGET_RENDER_FPS = Utilities.FPS;
+    private static final double TARGET_UPS = Settings.UPS;
+    private static final double TARGET_RENDER_FPS = Settings.FPS;
     private static final double FIXED_DT = 1.0 / TARGET_UPS;
     private static final double RENDER_DT = 1.0 / TARGET_RENDER_FPS;
     private static final double MAX_FRAME_TIME = 0.25;
@@ -30,8 +30,9 @@ public class Game extends AnimationTimer{
     private Player player; //There only 1 player lol
 
     //region TEST
-    private BulletSpawner bulletSpawner;
-    private BulletPool bulletPool;
+    private BulletSpawner testBulletSpawner;
+    private BulletSpawner testBulletSpawner2;
+    private BulletPool testBulletPool;
     //endregion
 
     private BulletSpawner playerbulletSpawner;
@@ -55,11 +56,18 @@ public class Game extends AnimationTimer{
     }
 
     private void initClasses(){
-        bulletPool = new BulletPool(8192);
-        bulletSpawner = new BulletSpawner(bulletPool);
         playerbulletPool = new BulletPool(1024);
-        playerbulletSpawner = new BulletSpawner(playerbulletPool);
-        player = new Player((float) Utilities.HORIZONTAL_RESOLUTION / 2 , (float) Utilities.VERTICAL_RESOLUTION * 6 / 8 , 16 , .5f , playerbulletSpawner);
+        player = new Player((float) Settings.HORIZONTAL_RESOLUTION / 2 , (float) Settings.VERTICAL_RESOLUTION * 6 / 8 , 16 , .5f , playerbulletPool);
+
+
+
+
+
+        testBulletPool = new BulletPool(8192);
+        testBulletSpawner = new BulletSpawner(testBulletPool,640, 100 ,0,0,90
+        ,10,12,360,100,20,.1,1,.5,40 ,BulletType.ENEMY_ORB1);
+        testBulletSpawner2 = new BulletSpawner(testBulletPool,0 ,0 ,0,0,0
+                ,0,3,15,150,0,.2,3,1, 50 ,BulletType.ENEMY_ORB2);
     }
 
 
@@ -122,63 +130,25 @@ public class Game extends AnimationTimer{
 
         player.render(gc);
         playerbulletPool.renderAll(gc);
-        bulletPool.renderAll(gc);
+        testBulletPool.renderAll(gc);
 
     }
 
-    //region Test 1 Para
-    private double testSpawnTimer1 = 0.0;
-    private double testSpawnTimer2 = 0.0;
-    private double testSpawnInterval1 = 0.35; // seconds between bursts (frequency = ~2.86 bursts/sec)
-    private double testSpawnInterval2 = 0.5;
-    private double ringStartAngle = 0.0;
-    //endregion
 
     private void update(double dt) {
 
         player.update(dt);
-
-
-        testSpawnTimer1 -= dt;
-        if (testSpawnTimer1 <= 0.0) {
-
-            bulletSpawner.spawnRing(
-                    BulletType.ENEMY_ORB1,
-                    Utilities.HORIZONTAL_RESOLUTION / 2,
-                    0,
-                    30,
-                    120,
-                    0 + ringStartAngle,
-                    0,
-                    false
-            );
-
-            ringStartAngle += 25;         // rotate pattern slightly each burst
-            testSpawnTimer1 += testSpawnInterval1; // keeps cadence steady even if dt is slightly off
-        }
-
-        testSpawnTimer2 -= dt;
-        if (testSpawnTimer2 <= 0.0) {
-
-            bulletSpawner.spawnRing(
-                    BulletType.ENEMY_ORB2,
-                    Utilities.HORIZONTAL_RESOLUTION / 2,
-                    0,
-                    50,
-                    200,
-                    0 + ringStartAngle,
-                    0,
-                    false
-            );
-
-            ringStartAngle += 45;         // rotate pattern slightly each burst
-            testSpawnTimer2 += testSpawnInterval2; // keeps cadence steady even if dt is slightly off
-        }
-
-
-
-        bulletPool.updateAll(dt);
         playerbulletPool.updateAll(dt);
+
+
+
+
+        testBulletPool.updateAll(dt);
+        testBulletSpawner.update(dt);
+        testBulletSpawner2.update(dt);
+        double rad = Math.atan2(player.gety() , player.getx()) ;
+        System.out.println(player.gety() + " " + player.getx() + " " + rad);
+        testBulletSpawner2.setBaseAngle(Math.toDegrees(rad));
     }
 
     //GETTER SETTER

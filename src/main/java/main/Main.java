@@ -1,7 +1,8 @@
 package main;
 
 
-import Utility.Utilities;
+import Utils.Settings;
+import Utils.Utility;
 import input.KeyBoardInput;
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -24,12 +25,12 @@ public class Main extends Application {
         Stage stage = new Stage();
 
         Group root = new Group();
-        Scene scene = new Scene(root , Utilities.HORIZONTAL_RESOLUTION, Utilities.VERTICAL_RESOLUTION);
+        Scene scene = new Scene(root , Settings.HORIZONTAL_RESOLUTION, Settings.VERTICAL_RESOLUTION);
         scene.setFill(Color.BLACK);
 
         //Canvas Setup
         //CANVAS IS IDEAL FOR GAME SO TY
-        Canvas canvas = new Canvas(Utilities.HORIZONTAL_RESOLUTION, Utilities.VERTICAL_RESOLUTION);
+        Canvas canvas = new Canvas(Settings.HORIZONTAL_RESOLUTION, Settings.VERTICAL_RESOLUTION);
         root.getChildren().add(canvas);
         game = new Game(canvas);
 
