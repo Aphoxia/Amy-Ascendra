@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 public class Player extends Entity{
 
     //LOGIC
-    private float movementSpeed = 250f;
+    private float movementSpeed = 200f;
     private int xDir = 0;
     private int yDir = 0;
     private boolean isMoving;
@@ -18,8 +18,8 @@ public class Player extends Entity{
 
 
 
-    public Player(float x , float y){
-        super(x,y);
+    public Player(float x , float y , float size , float hitboxPercentage){
+        super(x,y,size,hitboxPercentage);
         left = false;
         right = false;
         up = false;
@@ -37,19 +37,19 @@ public class Player extends Entity{
         double drawX = Math.round(x);
         double drawY = Math.round(y);
 
-        // Main temporary circle body
-        gc.setFill(Color.CYAN);
-        gc.fillOval(drawX, drawY, 10,10);
 
-        // Optional outline so it stands out against backgrounds
+        gc.setFill(Color.CYAN);
+        gc.fillOval(drawX, drawY, size,size);
+
+
         gc.setStroke(Color.WHITE);
         gc.setLineWidth(1.5);
-        gc.strokeOval(drawX, drawY, 10,10);
+        gc.strokeOval(drawX, drawY, size,size);
 
-        // Optional small center core (classic bullet-hell hitbox visual)
-        double coreSize = 3.0;
-        double coreX = x + (10 - coreSize) / 2.0;
-        double coreY = y + (10 - coreSize) / 2.0;
+
+        double coreSize = (size * hitboxPercentage);
+        double coreX = x + (size - coreSize) / 2.0;
+        double coreY = y + (size - coreSize) / 2.0;
         gc.setFill(Color.RED);
         gc.fillOval(Math.round(coreX), Math.round(coreY), coreSize, coreSize);
 
