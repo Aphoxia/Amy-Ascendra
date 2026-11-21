@@ -23,4 +23,20 @@ public abstract class Entity {
     public  abstract void update(double dt);
 
     public  abstract void render(GraphicsContext gc);
+
+    public double getx(){
+        return x;
+    }
+
+    public double gety(){
+        return y;
+    }
+
+    public double getHitboxPercentage() {
+        return hitboxPercentage;
+    }
+
+    public double getSize() {
+        return size;
+    }
 }

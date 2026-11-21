@@ -6,12 +6,13 @@
 
 package main;
 
+import Managers.GameManager;
 import Projecties.BulletSpawner;
 import Entities.Player;
 import Projecties.BulletPool;
 import Projecties.BulletType;
+import System.CollisionSystem;
 import Utils.Settings;
-import Utils.Utility;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -56,6 +57,7 @@ public class Game extends AnimationTimer{
     }
 
     private void initClasses(){
+
         playerbulletPool = new BulletPool(1024);
         player = new Player((float) Settings.HORIZONTAL_RESOLUTION / 2 , (float) Settings.VERTICAL_RESOLUTION * 6 / 8 , 16 , .5f , playerbulletPool);
 
@@ -65,7 +67,7 @@ public class Game extends AnimationTimer{
 
         testBulletPool = new BulletPool(8192);
         testBulletSpawner = new BulletSpawner(testBulletPool,640, 100 ,0,0,90
-        ,10,12,360,100,20,.1,1,.5,40 ,BulletType.ENEMY_ORB1);
+        ,0,12,360,100,20,0,1,1,40 ,BulletType.ENEMY_ORB1);
         testBulletSpawner2 = new BulletSpawner(testBulletPool,0 ,0 ,0,0,0
                 ,0,3,15,150,0,.2,3,1, 50 ,BulletType.ENEMY_ORB2);
     }
@@ -137,18 +139,25 @@ public class Game extends AnimationTimer{
 
     private void update(double dt) {
 
+        //MANAGER
+        GameManager.getInstance().update(dt);
+
         player.update(dt);
         playerbulletPool.updateAll(dt);
 
 
-
+        //TEST 1
 
         testBulletPool.updateAll(dt);
         testBulletSpawner.update(dt);
         testBulletSpawner2.update(dt);
         double rad = Math.atan2(player.gety() , player.getx()) ;
-        System.out.println(player.gety() + " " + player.getx() + " " + rad);
+        //System.out.println(player.gety() + " " + player.getx() + " " + rad);
         testBulletSpawner2.setBaseAngle(Math.toDegrees(rad));
+
+        //TEST 2
+        CollisionSystem.CheckBullet(testBulletPool , player);
+
     }
 
     //GETTER SETTER

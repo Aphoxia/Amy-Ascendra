@@ -5,6 +5,7 @@ package Projecties;
 
 import Utils.Settings;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 
 public class Bullet {
@@ -17,6 +18,8 @@ public class Bullet {
         private double currentDegree, angularVelocity;
         private BulletType type;
         private double lifetime , age;
+        private double Size;
+        private double hitboxSize;
 
 
     public Bullet(){
@@ -44,7 +47,7 @@ public class Bullet {
         currentDegree += (dt * angularVelocity);
         double deg = Math.toRadians(currentDegree);
         vx = Math.cos(deg) * currentSpeed * dt;
-        vy = Math.sin(deg) * currentSpeed* dt;
+        vy = Math.sin(deg) * currentSpeed * dt;
         x += vx;
         y += vy;
 
@@ -68,6 +71,8 @@ public class Bullet {
         this.active = true;
         this.lifetime = lifetime;
         this.age = 0;
+        Size = type.visualSize;
+        hitboxSize = type.hitRadius;
 
         //System.out.println("New Spees is : " + newSpeed);
     }
@@ -75,13 +80,25 @@ public class Bullet {
     public void render(GraphicsContext gc) {
         if (!active) return;
 
-        double visualRender = type.visualSize * Settings.PIXELSCALE;
+        double visualRender = Size * Settings.PIXELSCALE;
         double half = visualRender * 0.5;
-        double dx = Math.round(x - half);
-        double dy = Math.round(y - half);
+        double dx = x - half;
+        double dy = y - half;
 
         gc.setImageSmoothing(false);
         gc.drawImage(type.sprite,dx,dy, visualRender, visualRender);
+
+        double hitboxRender = hitboxSize * Settings.PIXELSCALE;
+        double hitboxhalf = hitboxRender * .5;
+        double rx = x - hitboxhalf;
+        double ry = y - hitboxhalf;
+
+        gc.setFill(Color.BLACK);
+        gc.fillOval(rx , ry , hitboxRender , hitboxRender);
+
+
+
+
 
     }
 
@@ -91,6 +108,18 @@ public class Bullet {
 
     public void setActive(boolean active){
         this.active = active;
+    }
+
+    public double getX(){
+        return x;
+    }
+
+    public double getY(){
+        return y;
+    }
+
+    public double getHitboxSize(){
+        return hitboxSize;
     }
 }
 

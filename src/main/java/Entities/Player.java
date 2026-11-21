@@ -46,9 +46,8 @@ public class Player extends Entity{
         playerbulletSpawner = new ArrayList<>();
 
         BulletSpawner playerBulletSpawner1 = new BulletSpawner(bulletPool,0,0,0,0,- 90,0,3,15,1000,0,0,3,.05, 2, BulletType.Player_Bullet1);
-        //BulletSpawner playerBulletSpawner2 = new BulletSpawner(bulletPool,0,0,0,0,0,0,1,2,500,0,0,0,1,.15, BulletType.Player_Bullet2);
         playerbulletSpawner.add(playerBulletSpawner1);
-        //playerbulletSpawner.add(playerBulletSpawner2);
+
 
     }
 
@@ -58,7 +57,7 @@ public class Player extends Entity{
         shoot(dt);
 
         for (BulletSpawner bulletSpawner : playerbulletSpawner){
-            bulletSpawner.setX(x + 6);
+            bulletSpawner.setX(x);
             bulletSpawner.setY(y);
             bulletSpawner.update(dt);
         }
@@ -67,8 +66,8 @@ public class Player extends Entity{
 
     @Override
     public void render(GraphicsContext gc) {
-        double drawX = Math.round(x);
-        double drawY = Math.round(y);
+        double drawX = x - (size / 2);
+        double drawY = y - (size / 2);
 
         gc.setFill(Color.CYAN);
         gc.fillOval(drawX, drawY, size,size);
@@ -77,12 +76,12 @@ public class Player extends Entity{
         gc.setLineWidth(1.5);
         gc.strokeOval(drawX, drawY, size,size);
 
-
+        //HITBOX
         double coreSize = (size * hitboxPercentage);
-        double coreX = x + (size - coreSize) / 2.0;
-        double coreY = y + (size - coreSize) / 2.0;
+        double coreX = x - (coreSize / 2);
+        double coreY = y - (coreSize / 2);
         gc.setFill(Color.RED);
-        gc.fillOval(Math.round(coreX), Math.round(coreY), coreSize, coreSize);
+        gc.fillOval(coreX , coreY, coreSize, coreSize);
 
     }
 
@@ -109,8 +108,8 @@ public class Player extends Entity{
         double norm = Utility.Normalize(xDir , yDir);
         //Utilities should return 1 or .707 if I am not wrong.
 
-        x = (double) (x + (movementSpeed * norm * xDir * dt));
-        y = (double) (y + (movementSpeed * norm * yDir * dt));
+        x = (x + (movementSpeed * norm * xDir * dt));
+        y = (y + (movementSpeed * norm * yDir * dt));
 
         //TEST
         //System.out.println(Utility.Distance(movementSpeed * norm * xDir , movementSpeed * norm * yDir));
@@ -183,11 +182,5 @@ public class Player extends Entity{
         this.up = up;
     }
 
-    public double getx(){
-        return x;
-    }
 
-    public double gety(){
-        return y;
-    }
 }

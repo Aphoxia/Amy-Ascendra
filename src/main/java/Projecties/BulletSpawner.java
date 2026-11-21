@@ -61,6 +61,7 @@ private final BulletPool bulletPool;
         public void update(double dt) {
             if (!isActive) return;
             timer += dt;
+            baseAngle += spinSpeed * dt;
 
             if (inCooldown) {
                 if (timer >= cooldownTime) {
