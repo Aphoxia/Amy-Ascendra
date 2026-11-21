@@ -7,10 +7,11 @@
 package main;
 
 import Managers.GameManager;
+import ProjectieEmitter.SpinPortal;
+import ProjectieEmitter.TriFanPortal;
 import Projecties.BulletSpawner;
 import Entities.Player;
 import Projecties.BulletPool;
-import Projecties.BulletType;
 import System.CollisionSystem;
 import Utils.Settings;
 import javafx.animation.AnimationTimer;
@@ -34,6 +35,9 @@ public class Game extends AnimationTimer{
     private BulletSpawner testBulletSpawner;
     private BulletSpawner testBulletSpawner2;
     private BulletPool testBulletPool;
+
+    private TriFanPortal test1;
+    private SpinPortal test2;
     //endregion
 
     private BulletSpawner playerbulletSpawner;
@@ -59,17 +63,16 @@ public class Game extends AnimationTimer{
     private void initClasses(){
 
         playerbulletPool = new BulletPool(1024);
-        player = new Player((float) Settings.HORIZONTAL_RESOLUTION / 2 , (float) Settings.VERTICAL_RESOLUTION * 6 / 8 , 16 , .5f , playerbulletPool);
+        player = new Player((float) Settings.HORIZONTAL_RESOLUTION / 2 , (float) Settings.VERTICAL_RESOLUTION * 6 / 8 , 16 , .5 ,playerbulletPool);
 
 
 
 
 
         testBulletPool = new BulletPool(8192);
-        testBulletSpawner = new BulletSpawner(testBulletPool,640, 100 ,0,0,90
-        ,0,12,360,100,20,0,1,1,40 ,BulletType.ENEMY_ORB1);
-        testBulletSpawner2 = new BulletSpawner(testBulletPool,0 ,0 ,0,0,0
-                ,0,3,15,150,0,.2,3,1, 50 ,BulletType.ENEMY_ORB2);
+        test1 = new TriFanPortal(0 , 0 , 60 , testBulletPool);
+        test2 = new SpinPortal(650 , 200, 60 ,testBulletPool);
+
     }
 
 
@@ -126,13 +129,21 @@ public class Game extends AnimationTimer{
         double width = canvas.getWidth();
         double height = canvas.getHeight();
 
+
+
+        gc.save();
+
         gc.setImageSmoothing(false); //FOR PIXEL ART
         gc.setFill(Color.rgb(0,0,0));
         gc.fillRect(0, 0, width, height);
 
+        gc.translate(GameManager.getInstance().getScreenShake().getX(), (GameManager.getInstance().getScreenShake().getY()));
+
         player.render(gc);
         playerbulletPool.renderAll(gc);
         testBulletPool.renderAll(gc);
+
+        gc.restore();
 
     }
 
@@ -148,12 +159,14 @@ public class Game extends AnimationTimer{
 
         //TEST 1
 
+        test1.update(dt);
+        test2.update(dt);
         testBulletPool.updateAll(dt);
-        testBulletSpawner.update(dt);
-        testBulletSpawner2.update(dt);
-        double rad = Math.atan2(player.gety() , player.getx()) ;
-        //System.out.println(player.gety() + " " + player.getx() + " " + rad);
-        testBulletSpawner2.setBaseAngle(Math.toDegrees(rad));
+//        testBulletSpawner.update(dt);
+//        testBulletSpawner2.update(dt);
+//        double rad = Math.atan2(player.gety() , player.getx()) ;
+//        //System.out.println(player.gety() + " " + player.getx() + " " + rad);
+//        testBulletSpawner2.setBaseAngle(Math.toDegrees(rad));
 
         //TEST 2
         CollisionSystem.CheckBullet(testBulletPool , player);

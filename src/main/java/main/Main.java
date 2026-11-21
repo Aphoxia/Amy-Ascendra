@@ -40,7 +40,7 @@ public class Main extends Application {
 
         //Stage Settings
         stage.setScene(scene);
-        stage.setTitle("Amy Ascendra Alpha 0.0.1");    //Title
+        stage.setTitle("Amy Ascendra Alpha 0.0.2");    //Title
         stage.setResizable(false); // So that the Sprite does not break
 
         //Haven't drawn lol

@@ -12,10 +12,10 @@ public abstract class Entity {
     protected double size;
     protected double hitboxPercentage;
 
-    public Entity(double x , double y , double size , double hitboxPercentage , BulletPool bulletPool){
+    public Entity(double x , double y , double visualSize , BulletPool bulletPool){
         this.x = x;
         this.y = y;
-        this.size = size;
+        this.size = visualSize;
         this.hitboxPercentage = hitboxPercentage;
         this.bulletPool = bulletPool;
     }

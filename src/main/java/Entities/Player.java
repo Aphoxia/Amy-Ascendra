@@ -1,9 +1,12 @@
 package Entities;
 
+import Pattern.BulletPattern;
+import Pattern.PlayerShoot;
+import Projecties.BulletConfig;
 import Projecties.BulletPool;
 import Projecties.BulletSpawner;
-import Projecties.BulletType;
-import Utils.GameTimer;
+import SpriteLoader.BulletType;
+import Utils.Settings;
 import Utils.Utility;
 import input.KeyBoardInput;
 import javafx.scene.canvas.GraphicsContext;
@@ -11,14 +14,19 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class Player extends Entity{
 
 
+    public static Player Instance;
     //LOGIC
     private double normalSpeed = 300f;
     private double focusSpeed = 150f;
+    private double hitboxPercentage;
+
+
     private int xDir = 0;
     private int yDir = 0;
     private boolean isMoving;
@@ -26,37 +34,48 @@ public class Player extends Entity{
     private boolean shotting;
     private boolean focus;
 
-    private ArrayList<BulletSpawner> playerbulletSpawner;
+    //PLAYER BULLET
 
-    //TIMER
-    private final double firerate = .1f;
-    private final GameTimer fireCooldown = GameTimer.every(firerate);
-
+    private BulletPattern playerBulletPattern;
+    private BulletConfig playerbulletConfig;
+    private ArrayList<BulletSpawner> playerbulletSpawners;
 
 
     public Player(double x , double y , double size , double hitboxPercentage , BulletPool playerbulletpool){
-        super(x,y,size,hitboxPercentage,playerbulletpool);
+        super(x,y,size,playerbulletpool);
+        this.hitboxPercentage = hitboxPercentage;
+
         left = false;
         right = false;
         up = false;
         down = false;
+
         shotting = false;
         focus = false;
 
-        playerbulletSpawner = new ArrayList<>();
+        Instance = this;
 
-        BulletSpawner playerBulletSpawner1 = new BulletSpawner(bulletPool,0,0,0,0,- 90,0,3,15,1000,0,0,3,.05, 2, BulletType.Player_Bullet1);
-        playerbulletSpawner.add(playerBulletSpawner1);
+        playerbulletSpawners = new ArrayList<>();
+        playerBulletPattern = new PlayerShoot(3 ,15);
+        playerbulletConfig = new BulletConfig(
+                List.of(BulletType.Player_Bullet1 , BulletType.Player_Bullet2),
+                3000,3000,0,0,5,true,false);
+
+        BulletSpawner playerBulletSpawner1 = new BulletSpawner(bulletPool,0,0,0,0,- 90,0,0,1,.05,playerbulletConfig,playerBulletPattern);
+        playerbulletSpawners.add(playerBulletSpawner1);
 
 
     }
 
     @Override
     public void update(double dt) {
+
         updatePos(dt);
         shoot(dt);
 
-        for (BulletSpawner bulletSpawner : playerbulletSpawner){
+        focus = KeyBoardInput.getInstance().isHeld(KeyCode.SHIFT);
+
+        for (BulletSpawner bulletSpawner : playerbulletSpawners){
             bulletSpawner.setX(x);
             bulletSpawner.setY(y);
             bulletSpawner.update(dt);
@@ -66,6 +85,10 @@ public class Player extends Entity{
 
     @Override
     public void render(GraphicsContext gc) {
+
+        gc.save();
+
+
         double drawX = x - (size / 2);
         double drawY = y - (size / 2);
 
@@ -77,15 +100,23 @@ public class Player extends Entity{
         gc.strokeOval(drawX, drawY, size,size);
 
         //HITBOX
+        if (focus){
         double coreSize = (size * hitboxPercentage);
         double coreX = x - (coreSize / 2);
         double coreY = y - (coreSize / 2);
         gc.setFill(Color.RED);
         gc.fillOval(coreX , coreY, coreSize, coreSize);
-
+    }
+        gc.restore();
     }
 
     private void updatePos(double dt) {
+
+
+        if (x < 0) x = 0;
+        if (x > Settings.HORIZONTAL_RESOLUTION) x = Settings.HORIZONTAL_RESOLUTION;
+        if ( y < 0) y = 0;
+        if ( y > Settings.VERTICAL_RESOLUTION) y = Settings.VERTICAL_RESOLUTION;
 
 
 
@@ -100,7 +131,7 @@ public class Player extends Entity{
         xDir = (right ? 1 : 0) - (left ? 1 : 0);
         yDir = (down ? 1 : 0) - (up ? 1 : 0);
         isMoving = (xDir != 0 || yDir != 0);
-        double movementSpeed = (input.isHeld(KeyCode.SHIFT)) ? focusSpeed : normalSpeed;
+        double movementSpeed = (focus) ? focusSpeed : normalSpeed;
 
 
         if (!isMoving) return;
@@ -120,7 +151,7 @@ public class Player extends Entity{
 
         shotting = KeyBoardInput.getInstance().isHeld(KeyCode.Z);
 
-            for (BulletSpawner bulletSpawner : playerbulletSpawner){
+            for (BulletSpawner bulletSpawner : playerbulletSpawners){
                 bulletSpawner.setActive(shotting);
             }
         }
@@ -182,5 +213,7 @@ public class Player extends Entity{
         this.up = up;
     }
 
-
+    public static Player getInstance() {
+        return Instance;
+    }
 }

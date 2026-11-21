@@ -37,8 +37,8 @@ public class BulletPool {
     public void updateAll(double dt) {
 
         //DEBUG
-//        System.out.println("Active Bullet : " + activeBullets.size());
-//        System.out.println("free : " + free.size());
+       //System.out.println("Active Bullet : " + activeBullets.size());
+       //System.out.println("free : " + free.size());
 
 
 

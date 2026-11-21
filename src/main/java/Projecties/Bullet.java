@@ -3,6 +3,7 @@ package Projecties;
 
 
 
+import SpriteLoader.BulletType;
 import Utils.Settings;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -74,32 +75,33 @@ public class Bullet {
         Size = type.visualSize;
         hitboxSize = type.hitRadius;
 
-        //System.out.println("New Spees is : " + newSpeed);
     }
 
     public void render(GraphicsContext gc) {
         if (!active) return;
 
-        double visualRender = Size * Settings.PIXELSCALE;
+        double visualRender = Size ;
         double half = visualRender * 0.5;
-        double dx = x - half;
-        double dy = y - half;
 
+        gc.save();
+
+        gc.translate(x,y);
         gc.setImageSmoothing(false);
-        gc.drawImage(type.sprite,dx,dy, visualRender, visualRender);
+        gc.rotate(currentDegree);
+        gc.drawImage(type.sprite,-half , -half, visualRender, visualRender);
 
-        double hitboxRender = hitboxSize * Settings.PIXELSCALE;
+        double hitboxRender = hitboxSize ;
         double hitboxhalf = hitboxRender * .5;
-        double rx = x - hitboxhalf;
-        double ry = y - hitboxhalf;
-
-        gc.setFill(Color.BLACK);
-        gc.fillOval(rx , ry , hitboxRender , hitboxRender);
 
 
+        if (Settings.DEBUG_DRAW_HITBOXES) {
+            gc.setFill(Color.RED);
+            gc.fillOval(-hitboxhalf , -hitboxhalf , hitboxRender , hitboxRender);
+        }
 
 
 
+        gc.restore();
     }
 
     public boolean isActive() {

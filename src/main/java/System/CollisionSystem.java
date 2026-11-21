@@ -1,6 +1,7 @@
 package System;
 
 import Entities.Entity;
+import Managers.GameManager;
 import Projecties.Bullet;
 import Projecties.BulletPool;
 import Utils.Settings;
@@ -22,7 +23,8 @@ public class CollisionSystem {
             if (!b.isActive()) continue;
 
             if (checkCollisionCircle(enitity.getx() , enitity.gety(), (enitity.getSize() * enitity.getHitboxPercentage()) ,b.getX() , b.getY() , b.getHitboxSize() * Settings.PIXELSCALE)){
-            //System.out.println("PLAYER GOT HIT");
+            System.out.println("PLAYER GOT HIT");
+            GameManager.getInstance().getScreenShake().trigger(.25 , 12);
             }
 
         }
