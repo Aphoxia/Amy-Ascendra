@@ -1,24 +1,41 @@
 package Entities;
 
+import Projecties.BulletPool;
 import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Entity {
 
-    protected BulletSpawner bulletSpawner;
-    protected float x;
-    protected float y;
-    protected float size;
-    protected float hitboxPercentage;
+    protected BulletPool bulletPool;
+    protected double x;
+    protected double y;
+    protected double size;
+    protected double hitboxPercentage;
 
-    public Entity(float x , float y , float size , float hitboxPercentage , BulletSpawner bulletSpawner){
+    public Entity(double x , double y , double visualSize , BulletPool bulletPool){
         this.x = x;
         this.y = y;
-        this.size = size;
+        this.size = visualSize;
         this.hitboxPercentage = hitboxPercentage;
-        this.bulletSpawner = bulletSpawner;
+        this.bulletPool = bulletPool;
     }
 
     public  abstract void update(double dt);
 
     public  abstract void render(GraphicsContext gc);
+
+    public double getx(){
+        return x;
+    }
+
+    public double gety(){
+        return y;
+    }
+
+    public double getHitboxPercentage() {
+        return hitboxPercentage;
+    }
+
+    public double getSize() {
+        return size;
+    }
 }

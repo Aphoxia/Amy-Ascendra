@@ -1,109 +1,172 @@
 package Entities;
 
-import Projecties.BulletType;
-import Utility.GameTimer;
-import Utility.Utilities;
+import Pattern.BulletPattern;
+import Pattern.PlayerShoot;
+import Projecties.BulletConfig;
+import Projecties.BulletPool;
+import Projecties.BulletSpawner;
+import SpriteLoader.BulletType16;
+import Utils.Settings;
+import Utils.Utility;
 import input.KeyBoardInput;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Player extends Entity{
 
 
+    public static Player Instance;
     //LOGIC
-    private float movementSpeed = 200f;
+    private double normalSpeed = 300f;
+    private double focusSpeed = 150f;
+    private double hitboxPercentage;
+
+
     private int xDir = 0;
     private int yDir = 0;
     private boolean isMoving;
     private boolean left,right,up,down;
+    private boolean shotting;
+    private boolean focus;
 
-    //TIMER
-    private final float firerate = .1f;
-    private final GameTimer fireCooldown = GameTimer.every(firerate);
+    //Effet
+    private DropShadow dropShadow = new DropShadow(4, 0, 2, Color.color(0, 0, 0, 0.65));
+
+    //PLAYER BULLET
+
+    private BulletPattern playerBulletPattern;
+    private BulletConfig playerbulletConfig;
+    private ArrayList<BulletSpawner> playerbulletSpawners;
 
 
+    public Player(double x , double y , double size , double hitboxPercentage , BulletPool playerbulletpool){
+        super(x,y,size,playerbulletpool);
+        this.hitboxPercentage = hitboxPercentage;
 
-    public Player(float x , float y , float size , float hitboxPercentage , BulletSpawner bulletSpawner){
-        super(x,y,size,hitboxPercentage,bulletSpawner);
         left = false;
         right = false;
         up = false;
         down = false;
+
+        shotting = false;
+        focus = false;
+
+        Instance = this;
+
+        playerbulletSpawners = new ArrayList<>();
+        playerBulletPattern = new PlayerShoot(3 ,5);
+        playerbulletConfig = new BulletConfig(
+                List.of(BulletType16.Player_Bullet1 , BulletType16.Player_Bullet2 , BulletType16.Player_Bullet3 , BulletType16.Player_Bullet4),
+                3000,3000,0,0,5,true,false);
+
+        BulletSpawner playerBulletSpawner1 = new BulletSpawner(bulletPool,0,0,0,0,- 90,0,0,1,.05,playerbulletConfig,playerBulletPattern);
+        playerbulletSpawners.add(playerBulletSpawner1);
+
+
     }
 
     @Override
     public void update(double dt) {
+
         updatePos(dt);
         shoot(dt);
+
+        focus = KeyBoardInput.getInstance().isHeld(KeyCode.SHIFT);
+
+        for (BulletSpawner bulletSpawner : playerbulletSpawners){
+            bulletSpawner.setX(x);
+            bulletSpawner.setY(y);
+            bulletSpawner.update(dt);
+        }
     }
 
 
     @Override
     public void render(GraphicsContext gc) {
-        double drawX = Math.round(x);
-        double drawY = Math.round(y);
+
+        gc.save();
 
 
+        double drawX = x - (size / 2);
+        double drawY = y - (size / 2);
 
+        gc.setEffect(dropShadow);
 
         gc.setFill(Color.CYAN);
         gc.fillOval(drawX, drawY, size,size);
-
 
         gc.setStroke(Color.WHITE);
         gc.setLineWidth(1.5);
         gc.strokeOval(drawX, drawY, size,size);
 
+        //TEST
+        //gc.fillRect(100,720 - 32,32,32); 20 of these to fill in the screen
 
+
+
+        //HITBOX
+        if (focus){
         double coreSize = (size * hitboxPercentage);
-        double coreX = x + (size - coreSize) / 2.0;
-        double coreY = y + (size - coreSize) / 2.0;
+        double coreX = x - (coreSize / 2);
+        double coreY = y - (coreSize / 2);
         gc.setFill(Color.RED);
-        gc.fillOval(Math.round(coreX), Math.round(coreY), coreSize, coreSize);
-
+        gc.fillOval(coreX , coreY, coreSize, coreSize);
+    }
+        gc.restore();
     }
 
     private void updatePos(double dt) {
 
 
+        if (x < Settings.HORIZONTAL_RESOLUTION / 2 - Settings.PlayAreaX / 2) x = Settings.HORIZONTAL_RESOLUTION / 2 - Settings.PlayAreaX / 2;
+        if (x > Settings.HORIZONTAL_RESOLUTION / 2 + Settings.PlayAreaX / 2) x = Settings.HORIZONTAL_RESOLUTION / 2 + Settings.PlayAreaX / 2;
+        if (y < Settings.VERTICAL_RESOLUTION / 2 - Settings.PlayAreaY / 2) y = Settings.VERTICAL_RESOLUTION / 2 - Settings.PlayAreaY / 2;
+        if (y > Settings.VERTICAL_RESOLUTION / 2 + Settings.PlayAreaY / 2) y = Settings.VERTICAL_RESOLUTION / 2 + Settings.PlayAreaY / 2;
+
+
 
         KeyBoardInput input = KeyBoardInput.getInstance();
-        up = input.isHeld(KeyCode.W) ;
-        down = input.isHeld(KeyCode.S) ;
-        left = input.isHeld(KeyCode.A) ;
-        right = input.isHeld(KeyCode.D);
+        up = input.isHeld(KeyCode.W) || input.isHeld(KeyCode.UP) ;
+        down = input.isHeld(KeyCode.S) || input.isHeld(KeyCode.DOWN) ;
+        left = input.isHeld(KeyCode.A) || input.isHeld(KeyCode.LEFT) ;
+        right = input.isHeld(KeyCode.D)|| input.isHeld(KeyCode.RIGHT) ;
+
 
 
         xDir = (right ? 1 : 0) - (left ? 1 : 0);
         yDir = (down ? 1 : 0) - (up ? 1 : 0);
         isMoving = (xDir != 0 || yDir != 0);
-
+        double movementSpeed = (focus) ? focusSpeed : normalSpeed;
 
 
         if (!isMoving) return;
 
-        float norm = Utilities.Normalize(xDir , yDir);
+        double norm = Utility.Normalize(xDir , yDir);
         //Utilities should return 1 or .707 if I am not wrong.
 
-        x = (float) (x + (movementSpeed * norm * xDir * dt));
-        y = (float) (y + (movementSpeed * norm * yDir * dt));
+        x = (x + (movementSpeed * norm * xDir * dt));
+        y = (y + (movementSpeed * norm * yDir * dt));
 
         //TEST
-        System.out.println(Utilities.Distance(movementSpeed * norm * xDir , movementSpeed * norm * yDir));
+        //System.out.println(Utility.Distance(movementSpeed * norm * xDir , movementSpeed * norm * yDir));
 
     }
 
     private void shoot(double dt){
 
-        if (fireCooldown.update(dt)) {
-            double random = -85 + (Math.random() * -10);
-            this.bulletSpawner.spawnAngle(BulletType.Player_Bullet1, x - 16, y, 1000, random, 0, true);
-            random = -85 + (Math.random() * -10);
-            this.bulletSpawner.spawnAngle(BulletType.Player_Bullet2, x + 32, y, 1000, random, 0, true);
+        shotting = KeyBoardInput.getInstance().isHeld(KeyCode.Z);
+
+            for (BulletSpawner bulletSpawner : playerbulletSpawners){
+                bulletSpawner.setActive(shotting);
+            }
         }
-    }
+
 
     //GETTER SETTER FOR TESTING (WHY I HAVE TO WRITE TEST)
 
@@ -127,14 +190,6 @@ public class Player extends Entity{
 
     public boolean getIsMoving(){
         return isMoving;
-    }
-
-    public void setMovementSpeed(float movementSpeed){
-        this.movementSpeed = movementSpeed;
-    }
-
-    public float getMovementSpeed(){
-        return movementSpeed;
     }
 
     public boolean isDown() {
@@ -167,5 +222,9 @@ public class Player extends Entity{
 
     public void set_Up(boolean up) {
         this.up = up;
+    }
+
+    public static Player getInstance() {
+        return Instance;
     }
 }

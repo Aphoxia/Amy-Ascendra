@@ -6,21 +6,26 @@
 
 package main;
 
-import Entities.BulletSpawner;
+import Managers.GameManager;
+import ProjectieEmitter.SpinPortal;
+import ProjectieEmitter.TriFanPortal;
+import Projecties.BulletSpawner;
 import Entities.Player;
 import Projecties.BulletPool;
-import Projecties.BulletType;
-import Utility.Utilities;
+import System.CollisionSystem;
+import UI.BackGround;
+import UI.Border;
+import Utils.Settings;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Bloom;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 public class Game extends AnimationTimer{
     //MAIN GAME CLASS INIT ALL BOSS PLAYER AND STUFF HERE
-    private static final double TARGET_UPS = Utilities.UPS;
-    private static final double TARGET_RENDER_FPS = Utilities.FPS;
+    private static final double TARGET_UPS = Settings.UPS;
+    private static final double TARGET_RENDER_FPS = Settings.FPS;
     private static final double FIXED_DT = 1.0 / TARGET_UPS;
     private static final double RENDER_DT = 1.0 / TARGET_RENDER_FPS;
     private static final double MAX_FRAME_TIME = 0.25;
@@ -30,8 +35,12 @@ public class Game extends AnimationTimer{
     private Player player; //There only 1 player lol
 
     //region TEST
-    private BulletSpawner bulletSpawner;
-    private BulletPool bulletPool;
+    private BulletSpawner testBulletSpawner;
+    private BulletSpawner testBulletSpawner2;
+    private BulletPool testBulletPool;
+
+    private TriFanPortal test1;
+    private SpinPortal test2;
     //endregion
 
     private BulletSpawner playerbulletSpawner;
@@ -47,6 +56,12 @@ public class Game extends AnimationTimer{
     private int framesThisSecond = 0;
     private int updatesThisSecond = 0;
 
+    private Bloom bloom = new Bloom(.5);
+
+    //GRAPHIC
+    private BackGround background = new BackGround();
+    private Border border = new Border();
+
     public Game(Canvas canvas) {
         this.canvas = canvas;
         this.gc = canvas.getGraphicsContext2D();
@@ -55,11 +70,18 @@ public class Game extends AnimationTimer{
     }
 
     private void initClasses(){
-        bulletPool = new BulletPool(8192);
-        bulletSpawner = new BulletSpawner(bulletPool);
+
         playerbulletPool = new BulletPool(1024);
-        playerbulletSpawner = new BulletSpawner(playerbulletPool);
-        player = new Player((float) Utilities.HORIZONTAL_RESOLUTION / 2 , (float) Utilities.VERTICAL_RESOLUTION * 6 / 8 , 16 , .5f , playerbulletSpawner);
+        player = new Player((float) Settings.HORIZONTAL_RESOLUTION / 2 , (float) Settings.VERTICAL_RESOLUTION * 6 / 8 , 16 , .5 ,playerbulletPool);
+
+
+
+
+
+        testBulletPool = new BulletPool(8192);
+        test1 = new TriFanPortal(0 , 0 , 60 , testBulletPool);
+        test2 = new SpinPortal(650 , 200, 60 ,testBulletPool);
+
     }
 
 
@@ -116,75 +138,72 @@ public class Game extends AnimationTimer{
         double width = canvas.getWidth();
         double height = canvas.getHeight();
 
+
+        gc.save();
         gc.setImageSmoothing(false); //FOR PIXEL ART
-        gc.setFill(Color.rgb(0,0,0));
+        gc.setFill(Color.rgb(72,86,125));
         gc.fillRect(0, 0, width, height);
+
+        gc.translate(GameManager.getInstance().getScreenShake().getX(), (GameManager.getInstance().getScreenShake().getY()));
+
+        background.render(gc);
 
         player.render(gc);
         playerbulletPool.renderAll(gc);
-        bulletPool.renderAll(gc);
+        testBulletPool.renderAll(gc);
+        canvas.setEffect(bloom);
+
+        gc.restore();
+
+        //UI
+        renderUI(gc);
+
+//        test1.Disable();
+//        test2.Disable();
+
 
     }
 
-    //region Test 1 Para
-    private double testSpawnTimer1 = 0.0;
-    private double testSpawnTimer2 = 0.0;
-    private double testSpawnInterval1 = 0.35; // seconds between bursts (frequency = ~2.86 bursts/sec)
-    private double testSpawnInterval2 = 0.5;
-    private double ringStartAngle = 0.0;
-    //endregion
 
     private void update(double dt) {
 
+
+        background.update(dt);
+
+
+
+        //MANAGER
+        GameManager.getInstance().update(dt);
+
         player.update(dt);
-
-
-        testSpawnTimer1 -= dt;
-        if (testSpawnTimer1 <= 0.0) {
-
-            bulletSpawner.spawnRing(
-                    BulletType.ENEMY_ORB1,
-                    Utilities.HORIZONTAL_RESOLUTION / 2,
-                    0,
-                    30,
-                    120,
-                    0 + ringStartAngle,
-                    0,
-                    false
-            );
-
-            ringStartAngle += 25;         // rotate pattern slightly each burst
-            testSpawnTimer1 += testSpawnInterval1; // keeps cadence steady even if dt is slightly off
-        }
-
-        testSpawnTimer2 -= dt;
-        if (testSpawnTimer2 <= 0.0) {
-
-            bulletSpawner.spawnRing(
-                    BulletType.ENEMY_ORB2,
-                    Utilities.HORIZONTAL_RESOLUTION / 2,
-                    0,
-                    50,
-                    200,
-                    0 + ringStartAngle,
-                    0,
-                    false
-            );
-
-            ringStartAngle += 45;         // rotate pattern slightly each burst
-            testSpawnTimer2 += testSpawnInterval2; // keeps cadence steady even if dt is slightly off
-        }
-
-
-
-        bulletPool.updateAll(dt);
         playerbulletPool.updateAll(dt);
+
+
+        //TEST 1
+
+        test1.update(dt);
+        test2.update(dt);
+        testBulletPool.updateAll(dt);
+//        testBulletSpawner.update(dt);
+//        testBulletSpawner2.update(dt);
+//        double rad = Math.atan2(player.gety() , player.getx()) ;
+//        //System.out.println(player.gety() + " " + player.getx() + " " + rad);
+//        testBulletSpawner2.setBaseAngle(Math.toDegrees(rad));
+
+        //TEST 2
+        CollisionSystem.CheckBullet(testBulletPool , player);
+        test1.Disable();
+
     }
 
     //GETTER SETTER
 
     public Player getPlayer(){
         return player;
+    }
+
+    private void renderUI(GraphicsContext gc){
+        border.render(gc);
     }
 
 

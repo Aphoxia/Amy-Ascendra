@@ -1,62 +1,133 @@
 package Projecties;
 
-//CHANGE THIS CLASS LATER
 
 
+
+import SpriteLoader.BulletType16;
+import Utils.Settings;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-public class Bullet {
-        private boolean playerBullet;
-        public boolean active = false;
-        private double x, y, speed , currentSpeed, angleDeg, acceleration;
 
-        private BulletType type;
+public class Bullet {
+        private boolean isPlayer;
+        private boolean active;
+        private double x , y ;// THE ON SCREEN POS MIDDLE DOT
+        private double vx , vy; //VELOCITY
+        private double currentSpeed, maxSpeed;
+        private double acceleration;
+        private double currentDegree, angularVelocity;
+        private BulletType16 type;
+        private double lifetime , age;
+        private double Size;
+        private double hitboxSize;
+
+
+        //TEST
+
+
+    public Bullet(){
+        isPlayer = false;
+        active = false;
+        x = 0;
+        y = 0;
+        vx = 0;
+        vy = 0;
+        currentSpeed = 0;
+        acceleration = 0;
+        currentDegree = 0;
+        angularVelocity = 0;
+        type = BulletType16.Player_Bullet1; //DEFAULT
+        lifetime = 0;
+        age = 0;
+    }
 
     public void update(double dt) {
+
         if (!active) return;
+        age += dt;
 
-        this.currentSpeed += (acceleration * dt);
-        double rad = Math.toRadians(angleDeg);
-        x += Math.cos(rad) *currentSpeed * dt;
-        y += Math.sin(rad) * currentSpeed* dt;
+        currentSpeed = currentSpeed + (dt * acceleration);
+        currentDegree += (dt * angularVelocity);
+        double deg = Math.toRadians(currentDegree);
+        vx = Math.cos(deg) * currentSpeed * dt;
+        vy = Math.sin(deg) * currentSpeed * dt;
+        x += vx;
+        y += vy;
 
-        // Simply mark inactive to return it to the pool
-        if (x < -50 || x > 1330 || y < -50 || y > 800) {
+        //System.out.println(currentSpeed );
+
+        //ACTIVE CHECK
+        if (x < -50 || x > 1330 || y < -50 || y > 800 || age >= lifetime) {
             active = false;
         }
     }
 
-    public void reset(BulletType type, double x, double y, double speed ,double angleDeg , double acceleration ,boolean playerBullet) {
+    public void reset(BulletType16 type, double x, double y, double newSpeed, double newAngle , double newAcceleration , double newAngularVelocity , boolean isPlayer , double lifetime) {
         this.type = type;
         this.x = x;
         this.y = y;
-        this.currentSpeed = speed;
-        this.speed = speed;
-        this.angleDeg = angleDeg;
-        this.acceleration = acceleration;
+        this.currentSpeed = newSpeed;
+        this.currentDegree = newAngle;
+        this.acceleration = newAcceleration;
+        this.angularVelocity = newAngularVelocity;
+        this.isPlayer = isPlayer;
         this.active = true;
-        this.playerBullet = playerBullet;
+        this.lifetime = lifetime;
+        this.age = 0;
+        Size = type.visualSize;
+        hitboxSize = type.hitRadiusPecentage;
+
     }
 
     public void render(GraphicsContext gc) {
         if (!active) return;
 
-        double half = type.visualSize * 0.5;
-        double dx = Math.round(x - half);
-        double dy = Math.round(y - half);
+        double visualRender = Size ;
+        double half = visualRender * 0.5;
 
+        gc.save();
+        //TEST
+        double spinSpeed = 360;
+
+
+        gc.translate(x,y);
         gc.setImageSmoothing(false);
-        gc.drawImage(type.sprite,dx,dy, type.visualSize, type.visualSize);
-//        gc.setFill(Color.CYAN);
-//        double size = type.visualSize;
-//        gc.fillOval(x - (size / 2), y - (size / 2), size, size);
+        gc.rotate(currentDegree + (age * spinSpeed));
+        gc.drawImage(type.sprite,-half , -half, visualRender, visualRender);
+
+        double hitboxRender = hitboxSize ;
+        double hitboxhalf = hitboxRender * .5;
+
+
+        if (Settings.DEBUG_DRAW_HITBOXES) {
+            gc.setFill(Color.RED);
+            gc.fillOval(-hitboxhalf , -hitboxhalf , hitboxRender , hitboxRender);
+        }
+
+
+
+        gc.restore();
     }
-
-
 
     public boolean isActive() {
         return active;
+    }
+
+    public void setActive(boolean active){
+        this.active = active;
+    }
+
+    public double getX(){
+        return x;
+    }
+
+    public double getY(){
+        return y;
+    }
+
+    public double getHitboxSize(){
+        return hitboxSize;
     }
 }
 

@@ -1,4 +1,4 @@
-package Utility;
+package Utils;
 
 public class GameTimer {
     private double duration;
@@ -21,10 +21,6 @@ public class GameTimer {
         return new GameTimer(seconds, true, true);
     }
 
-    /**
-     * Advances the timer by dt (seconds).
-     * Returns true whenever the timer finishes (one-shot) or triggers a tick (repeating).
-     */
     public boolean update(double dt) {
         if (!running || dt <= 0.0) {
             return false;
@@ -77,7 +73,7 @@ public class GameTimer {
     }
 
     public double getProgress() {
-        if (duration <= 0.0) return 1.0;
+        if (duration <= 0.0) return 1.0; // ALREADY DONE
         return 1.0 - (remaining / duration);
     }
 }
