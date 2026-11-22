@@ -5,7 +5,7 @@ import Pattern.BulletPattern;
 import Projecties.BulletConfig;
 import Projecties.BulletPool;
 import Projecties.BulletSpawner;
-import SpriteLoader.BulletType;
+import SpriteLoader.BulletType16;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -25,7 +25,7 @@ public class TriFanPortal extends Entity implements IEmitter{
     public TriFanPortal (double x , double y , double visualSize , BulletPool bulletPool){
         super(x,y,visualSize,bulletPool);
         config = new BulletConfig(
-                List.of(BulletType.ENEMY_ORB1 , BulletType.ENEMY_ORB2 ),
+                List.of(BulletType16.ENEMY_ORB1 , BulletType16.ENEMY_ORB2 ),
                 200,200,0,0,10,false,true
         );
         pattern = new BulletPattern(3 , 50);

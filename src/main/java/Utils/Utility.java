@@ -1,5 +1,8 @@
 package Utils;
 
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+
 public class Utility {
 
     //MATH
@@ -16,6 +19,15 @@ public class Utility {
     public static double Random(double x , double y){
         return (double) (x + (Math.random() * (y - x)));
     }
+
+    public static Image loadSprite(String resourcePath) {
+        String image_path = ClassLoader.getSystemResource(resourcePath).toString();
+        return new Image(image_path,false);
+    }
+
+
+
+
 
     //CURVE FUNCTION
 }

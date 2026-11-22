@@ -1,7 +1,6 @@
 package Entities;
 
 import Projecties.BulletPool;
-import Projecties.BulletSpawner;
 import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Entity {

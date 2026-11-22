@@ -3,11 +3,11 @@ package Projecties;
 import java.util.List;
 import java.util.Random;
 
-import SpriteLoader.BulletType;
+import SpriteLoader.BulletType16;
 
 public final class BulletConfig {
 
-    private final List<BulletType> types;
+    private final List<BulletType16> types;
 
     private final double minSpeed;
     private final double maxSpeed;
@@ -24,10 +24,12 @@ public final class BulletConfig {
 
 
 
+
+
     Random random = new Random(); // RANDOM PARAMETER
 
     public BulletConfig(
-            List<BulletType> types,
+            List<BulletType16> types,
             double minSpeed,
             double maxSpeed,
             double acceleration,
@@ -46,11 +48,11 @@ public final class BulletConfig {
         this.Lockon = lockON;
     }
 
-    public List<BulletType> getTypes() {
+    public List<BulletType16> getTypes() {
         return types;
     }
 
-    public BulletType getRandomType() {
+    public BulletType16 getRandomType() {
         return types.get(random.nextInt(types.size()));
     }
 

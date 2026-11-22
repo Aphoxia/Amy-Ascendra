@@ -5,7 +5,7 @@ import Pattern.BulletPattern;
 import Projecties.BulletConfig;
 import Projecties.BulletPool;
 import Projecties.BulletSpawner;
-import SpriteLoader.BulletType;
+import SpriteLoader.BulletType16;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
@@ -25,7 +25,16 @@ public class SpinPortal extends Entity implements IEmitter{
     public SpinPortal (double x , double y , double visualSize , BulletPool bulletPool){
         super(x,y,visualSize,bulletPool);
         config = new BulletConfig(
-                List.of( BulletType.ENEMY_ORB2 ),
+                List.of( BulletType16.ENEMY_Star4,
+                        BulletType16.ENEMY_Star5,
+                        BulletType16.ENEMY_Star6,
+                        BulletType16.ENEMY_Star7,
+                        BulletType16.ENEMY_Star8,
+                        BulletType16.ENEMY_Star9,
+                        BulletType16.ENEMY_Star10,
+                        BulletType16.ENEMY_Star11,
+                        BulletType16.ENEMY_Star12,
+                        BulletType16.ENEMY_Star13),
                 150,200,60,0,10,false,false
         );
         pattern = new BulletPattern(2 , 180);

@@ -1,7 +1,7 @@
 package Pattern;
 
 public  class BulletPattern {
-  // SPIN THE SHOOTING DIRECTION
+
     private int bulletCount ;
     private double spreadAngle;
 

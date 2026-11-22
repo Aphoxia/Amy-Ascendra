@@ -13,10 +13,13 @@ import Projecties.BulletSpawner;
 import Entities.Player;
 import Projecties.BulletPool;
 import System.CollisionSystem;
+import UI.BackGround;
+import UI.Border;
 import Utils.Settings;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.Bloom;
 import javafx.scene.paint.Color;
 
 public class Game extends AnimationTimer{
@@ -52,6 +55,12 @@ public class Game extends AnimationTimer{
     private long fpsTimerNano = 0;
     private int framesThisSecond = 0;
     private int updatesThisSecond = 0;
+
+    private Bloom bloom = new Bloom(.5);
+
+    //GRAPHIC
+    private BackGround background = new BackGround();
+    private Border border = new Border();
 
     public Game(Canvas canvas) {
         this.canvas = canvas;
@@ -130,25 +139,38 @@ public class Game extends AnimationTimer{
         double height = canvas.getHeight();
 
 
-
         gc.save();
-
         gc.setImageSmoothing(false); //FOR PIXEL ART
-        gc.setFill(Color.rgb(0,0,0));
+        gc.setFill(Color.rgb(72,86,125));
         gc.fillRect(0, 0, width, height);
 
         gc.translate(GameManager.getInstance().getScreenShake().getX(), (GameManager.getInstance().getScreenShake().getY()));
 
+        background.render(gc);
+
         player.render(gc);
         playerbulletPool.renderAll(gc);
         testBulletPool.renderAll(gc);
+        canvas.setEffect(bloom);
 
         gc.restore();
+
+        //UI
+        renderUI(gc);
+
+//        test1.Disable();
+//        test2.Disable();
+
 
     }
 
 
     private void update(double dt) {
+
+
+        background.update(dt);
+
+
 
         //MANAGER
         GameManager.getInstance().update(dt);
@@ -170,6 +192,7 @@ public class Game extends AnimationTimer{
 
         //TEST 2
         CollisionSystem.CheckBullet(testBulletPool , player);
+        test1.Disable();
 
     }
 
@@ -177,6 +200,10 @@ public class Game extends AnimationTimer{
 
     public Player getPlayer(){
         return player;
+    }
+
+    private void renderUI(GraphicsContext gc){
+        border.render(gc);
     }
 
 

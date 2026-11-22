@@ -8,9 +8,12 @@ public class Settings {
     public static final int UPS = 60;
     public static final int PIXELSCALE = 1;
 
+    public static final int PlayAreaX = 540;
+    public static final int PlayAreaY = 720;
+
 
 
     //DEBUG SETTING
-    public static final boolean DEBUG_DRAW_HITBOXES = true;
+    public static final boolean DEBUG_DRAW_HITBOXES = false;
 
 }

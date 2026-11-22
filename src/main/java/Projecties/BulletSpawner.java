@@ -2,7 +2,9 @@ package Projecties;
 
 import Entities.Player;
 import Pattern.BulletPattern;
+import javafx.scene.media.AudioClip;
 
+import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,6 +21,8 @@ private final BulletPool bulletPool;
         private double spinSpeed;
 
 
+
+
         //PATTERN SETTINGS
         private BulletPattern bpattern;
 
@@ -29,11 +33,15 @@ private final BulletPool bulletPool;
         public double burstInterval = 0.05; // Time between shots in a burst
         public int shotsPerBurst = 5;       // How many volleys per burst
         public double cooldownTime = 1.0;
+        public double timer;
 
         //COUNTER
-        public double timer;
         private int shotsFired;
         private boolean inCooldown;
+
+        //TEST FOR NOW
+        URL resource =  ClassLoader.getSystemResource("Sound/ShootingSound/StarShoot1.wav");
+        AudioClip clip = new AudioClip(resource.toExternalForm());
 
         public  BulletSpawner(
                 BulletPool bulletPool
@@ -136,6 +144,10 @@ private final BulletPool bulletPool;
 
                 b.reset(bConfig.getRandomType(), x , y , bConfig.getRandomSpeed() ,angle, bConfig.getAcceleration(), bConfig.getAngularVelocity(),
                         bConfig.isPlayerBullet(),bConfig.getLifetime());
+
+                //TEST AUDIO CLIP
+                clip.setVolume(.5);
+                clip.play();
 
             }
         }

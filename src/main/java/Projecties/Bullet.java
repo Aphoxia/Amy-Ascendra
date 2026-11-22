@@ -3,7 +3,7 @@ package Projecties;
 
 
 
-import SpriteLoader.BulletType;
+import SpriteLoader.BulletType16;
 import Utils.Settings;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -17,10 +17,13 @@ public class Bullet {
         private double currentSpeed, maxSpeed;
         private double acceleration;
         private double currentDegree, angularVelocity;
-        private BulletType type;
+        private BulletType16 type;
         private double lifetime , age;
         private double Size;
         private double hitboxSize;
+
+
+        //TEST
 
 
     public Bullet(){
@@ -34,7 +37,7 @@ public class Bullet {
         acceleration = 0;
         currentDegree = 0;
         angularVelocity = 0;
-        type = BulletType.Player_Bullet1; //DEFAULT
+        type = BulletType16.Player_Bullet1; //DEFAULT
         lifetime = 0;
         age = 0;
     }
@@ -60,7 +63,7 @@ public class Bullet {
         }
     }
 
-    public void reset(BulletType type, double x, double y, double newSpeed,double newAngle , double newAcceleration , double newAngularVelocity , boolean isPlayer , double lifetime) {
+    public void reset(BulletType16 type, double x, double y, double newSpeed, double newAngle , double newAcceleration , double newAngularVelocity , boolean isPlayer , double lifetime) {
         this.type = type;
         this.x = x;
         this.y = y;
@@ -73,7 +76,7 @@ public class Bullet {
         this.lifetime = lifetime;
         this.age = 0;
         Size = type.visualSize;
-        hitboxSize = type.hitRadius;
+        hitboxSize = type.hitRadiusPecentage;
 
     }
 
@@ -84,10 +87,13 @@ public class Bullet {
         double half = visualRender * 0.5;
 
         gc.save();
+        //TEST
+        double spinSpeed = 360;
+
 
         gc.translate(x,y);
         gc.setImageSmoothing(false);
-        gc.rotate(currentDegree);
+        gc.rotate(currentDegree + (age * spinSpeed));
         gc.drawImage(type.sprite,-half , -half, visualRender, visualRender);
 
         double hitboxRender = hitboxSize ;

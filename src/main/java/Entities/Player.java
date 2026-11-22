@@ -5,11 +5,12 @@ import Pattern.PlayerShoot;
 import Projecties.BulletConfig;
 import Projecties.BulletPool;
 import Projecties.BulletSpawner;
-import SpriteLoader.BulletType;
+import SpriteLoader.BulletType16;
 import Utils.Settings;
 import Utils.Utility;
 import input.KeyBoardInput;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
@@ -34,6 +35,9 @@ public class Player extends Entity{
     private boolean shotting;
     private boolean focus;
 
+    //Effet
+    private DropShadow dropShadow = new DropShadow(4, 0, 2, Color.color(0, 0, 0, 0.65));
+
     //PLAYER BULLET
 
     private BulletPattern playerBulletPattern;
@@ -56,9 +60,9 @@ public class Player extends Entity{
         Instance = this;
 
         playerbulletSpawners = new ArrayList<>();
-        playerBulletPattern = new PlayerShoot(3 ,15);
+        playerBulletPattern = new PlayerShoot(3 ,5);
         playerbulletConfig = new BulletConfig(
-                List.of(BulletType.Player_Bullet1 , BulletType.Player_Bullet2),
+                List.of(BulletType16.Player_Bullet1 , BulletType16.Player_Bullet2 , BulletType16.Player_Bullet3 , BulletType16.Player_Bullet4),
                 3000,3000,0,0,5,true,false);
 
         BulletSpawner playerBulletSpawner1 = new BulletSpawner(bulletPool,0,0,0,0,- 90,0,0,1,.05,playerbulletConfig,playerBulletPattern);
@@ -92,12 +96,19 @@ public class Player extends Entity{
         double drawX = x - (size / 2);
         double drawY = y - (size / 2);
 
+        gc.setEffect(dropShadow);
+
         gc.setFill(Color.CYAN);
         gc.fillOval(drawX, drawY, size,size);
 
         gc.setStroke(Color.WHITE);
         gc.setLineWidth(1.5);
         gc.strokeOval(drawX, drawY, size,size);
+
+        //TEST
+        //gc.fillRect(100,720 - 32,32,32); 20 of these to fill in the screen
+
+
 
         //HITBOX
         if (focus){
@@ -113,10 +124,10 @@ public class Player extends Entity{
     private void updatePos(double dt) {
 
 
-        if (x < 0) x = 0;
-        if (x > Settings.HORIZONTAL_RESOLUTION) x = Settings.HORIZONTAL_RESOLUTION;
-        if ( y < 0) y = 0;
-        if ( y > Settings.VERTICAL_RESOLUTION) y = Settings.VERTICAL_RESOLUTION;
+        if (x < Settings.HORIZONTAL_RESOLUTION / 2 - Settings.PlayAreaX / 2) x = Settings.HORIZONTAL_RESOLUTION / 2 - Settings.PlayAreaX / 2;
+        if (x > Settings.HORIZONTAL_RESOLUTION / 2 + Settings.PlayAreaX / 2) x = Settings.HORIZONTAL_RESOLUTION / 2 + Settings.PlayAreaX / 2;
+        if (y < Settings.VERTICAL_RESOLUTION / 2 - Settings.PlayAreaY / 2) y = Settings.VERTICAL_RESOLUTION / 2 - Settings.PlayAreaY / 2;
+        if (y > Settings.VERTICAL_RESOLUTION / 2 + Settings.PlayAreaY / 2) y = Settings.VERTICAL_RESOLUTION / 2 + Settings.PlayAreaY / 2;
 
 
 
