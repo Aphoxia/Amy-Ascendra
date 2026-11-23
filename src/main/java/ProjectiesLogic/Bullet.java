@@ -1,4 +1,4 @@
-package Projecties;
+package ProjectiesLogic;
 
 
 
@@ -18,9 +18,11 @@ public class Bullet {
         private double acceleration;
         private double currentDegree, angularVelocity;
         private BulletType16 type;
+        private double visualSpinSpeed;
         private double lifetime , age;
         private double Size;
         private double hitboxSize;
+
 
 
         //TEST
@@ -37,6 +39,7 @@ public class Bullet {
         acceleration = 0;
         currentDegree = 0;
         angularVelocity = 0;
+        visualSpinSpeed = 0;
         type = BulletType16.Player_Bullet1; //DEFAULT
         lifetime = 0;
         age = 0;
@@ -63,8 +66,9 @@ public class Bullet {
         }
     }
 
-    public void reset(BulletType16 type, double x, double y, double newSpeed, double newAngle , double newAcceleration , double newAngularVelocity , boolean isPlayer , double lifetime) {
+    public void reset(BulletType16 type,double visualSpinSpeed, double x, double y, double newSpeed, double newAngle , double newAcceleration , double newAngularVelocity , boolean isPlayer , double lifetime) {
         this.type = type;
+        this.visualSpinSpeed = visualSpinSpeed;
         this.x = x;
         this.y = y;
         this.currentSpeed = newSpeed;
@@ -87,13 +91,10 @@ public class Bullet {
         double half = visualRender * 0.5;
 
         gc.save();
-        //TEST
-        double spinSpeed = 360;
-
 
         gc.translate(x,y);
         gc.setImageSmoothing(false);
-        gc.rotate(currentDegree + (age * spinSpeed));
+        gc.rotate(currentDegree + (age * visualSpinSpeed));
         gc.drawImage(type.sprite,-half , -half, visualRender, visualRender);
 
         double hitboxRender = hitboxSize ;

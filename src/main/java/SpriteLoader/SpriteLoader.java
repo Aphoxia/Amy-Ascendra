@@ -11,7 +11,12 @@ public final class SpriteLoader {
     private static final Map<String, Image> SHEETS = new HashMap<>();
 
     public static Image loadSprite(
-            String sourcepath, int frameWidth, int frameHeight, int column, int row) {
+
+            String sourcepath,
+            int frameWidth,
+            int frameHeight,
+            int column,
+            int row) {
 
         Image sheet = SHEETS.computeIfAbsent(sourcepath, SpriteLoader::loadSpriteSheet);
 
@@ -20,8 +25,10 @@ public final class SpriteLoader {
 
         return new WritableImage(
                 sheet.getPixelReader(),
-                sourceX, sourceY,
-                frameWidth, frameHeight
+                sourceX,
+                sourceY,
+                frameWidth,
+                frameHeight
         );
     }
 

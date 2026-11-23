@@ -1,12 +1,10 @@
-package Projecties;
+package ProjectiesLogic;
 
 import Entities.Player;
 import Pattern.BulletPattern;
 import javafx.scene.media.AudioClip;
 
 import java.net.URL;
-import java.util.Collection;
-import java.util.List;
 
 public class BulletSpawner{
 //SPAWNER SETTINGS
@@ -142,7 +140,7 @@ private final BulletPool bulletPool;
                         ? baseAngle
                         : startAngle + step * i;
 
-                b.reset(bConfig.getRandomType(), x , y , bConfig.getRandomSpeed() ,angle, bConfig.getAcceleration(), bConfig.getAngularVelocity(),
+                b.reset(bConfig.getRandomType(),bConfig.getVisualSpinSpeed(), x , y , bConfig.getRandomSpeed() ,angle, bConfig.getAcceleration(), bConfig.getAngularVelocity(),
                         bConfig.isPlayerBullet(),bConfig.getLifetime());
 
                 //TEST AUDIO CLIP
@@ -150,6 +148,30 @@ private final BulletPool bulletPool;
                 clip.play();
 
             }
+        }
+
+        public void start(){
+            if (isActive) return;
+            isActive = true;
+            timer = 0;
+            shotsFired = 0;
+            inCooldown = false;
+        }
+
+
+        public void stop(){
+            isActive = false;
+
+        }
+
+        public void setbConfig(BulletConfig bconfig){
+            if (bconfig == null) return;
+            this.bConfig = bconfig;
+        }
+
+        public void setBpattern(BulletPattern bulletPattern){
+            if (bulletPattern == null) return;
+            this.bpattern = bulletPattern;
         }
 
         public void setX(double x) {
@@ -160,11 +182,21 @@ private final BulletPool bulletPool;
             this.y = y;
         }
 
-        public void setBaseAngle(double baseAngle){
+        public double getX() {
+            return x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+    public void setBaseAngle(double baseAngle){
             this.baseAngle = baseAngle;
         }
 
         public void setActive(boolean active){
             this.isActive = active;
         }
+
+
 }

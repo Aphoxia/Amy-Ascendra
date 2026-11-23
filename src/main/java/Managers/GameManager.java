@@ -21,7 +21,7 @@ public class GameManager {
     public void update(double dt){
         timer += dt;
         screenShake.update(dt);
-        System.out.println(Math.round(timer));
+        //System.out.println(Math.round(timer));
     }
 
     public static GameManager getInstance() {

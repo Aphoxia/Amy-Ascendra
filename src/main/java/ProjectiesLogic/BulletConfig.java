@@ -1,4 +1,4 @@
-package Projecties;
+package ProjectiesLogic;
 
 import java.util.List;
 import java.util.Random;
@@ -8,6 +8,7 @@ import SpriteLoader.BulletType16;
 public final class BulletConfig {
 
     private final List<BulletType16> types;
+    private final double visualSpinSpeed;
 
     private final double minSpeed;
     private final double maxSpeed;
@@ -30,6 +31,7 @@ public final class BulletConfig {
 
     public BulletConfig(
             List<BulletType16> types,
+            double visualSpinSpeed,
             double minSpeed,
             double maxSpeed,
             double acceleration,
@@ -39,6 +41,7 @@ public final class BulletConfig {
             boolean lockON
     ) {
         this.types = List.copyOf(types);
+        this.visualSpinSpeed = visualSpinSpeed;
         this.minSpeed = minSpeed;
         this.maxSpeed = maxSpeed;
         this.acceleration = acceleration;
@@ -64,6 +67,6 @@ public final class BulletConfig {
     public double getAngularVelocity() { return angularVelocity; }
     public double getLifetime() { return lifetime; }
     public boolean isPlayerBullet() { return playerBullet; }
-    public boolean isLockon() { return Lockon;
-    }
+    public boolean isLockon() { return Lockon;}
+    public double getVisualSpinSpeed(){return visualSpinSpeed;}
 }

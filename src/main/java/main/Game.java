@@ -6,12 +6,13 @@
 
 package main;
 
+import Entities.Boss;
 import Managers.GameManager;
-import ProjectieEmitter.SpinPortal;
-import ProjectieEmitter.TriFanPortal;
-import Projecties.BulletSpawner;
+import PrefabPattern.SpinPortal;
+import PrefabPattern.TriFanPortal;
+import ProjectiesLogic.BulletSpawner;
 import Entities.Player;
-import Projecties.BulletPool;
+import ProjectiesLogic.BulletPool;
 import System.CollisionSystem;
 import UI.BackGround;
 import UI.Border;
@@ -61,6 +62,9 @@ public class Game extends AnimationTimer{
     //GRAPHIC
     private BackGround background = new BackGround();
     private Border border = new Border();
+
+    //ENTITIES
+    private Boss boss = new Boss(640 , 360 , 5 , 64, testBulletPool);
 
     public Game(Canvas canvas) {
         this.canvas = canvas;
@@ -149,6 +153,7 @@ public class Game extends AnimationTimer{
         background.render(gc);
 
         player.render(gc);
+        boss.render(gc);
         playerbulletPool.renderAll(gc);
         testBulletPool.renderAll(gc);
         canvas.setEffect(bloom);
@@ -176,6 +181,7 @@ public class Game extends AnimationTimer{
         GameManager.getInstance().update(dt);
 
         player.update(dt);
+        boss.update(dt);
         playerbulletPool.updateAll(dt);
 
 

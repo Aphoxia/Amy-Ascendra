@@ -1,6 +1,6 @@
 package Entities;
 
-import Projecties.BulletPool;
+import ProjectiesLogic.BulletPool;
 import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Entity {
@@ -15,7 +15,6 @@ public abstract class Entity {
         this.x = x;
         this.y = y;
         this.size = visualSize;
-        this.hitboxPercentage = hitboxPercentage;
         this.bulletPool = bulletPool;
     }
 

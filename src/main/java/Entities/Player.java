@@ -2,9 +2,9 @@ package Entities;
 
 import Pattern.BulletPattern;
 import Pattern.PlayerShoot;
-import Projecties.BulletConfig;
-import Projecties.BulletPool;
-import Projecties.BulletSpawner;
+import ProjectiesLogic.BulletConfig;
+import ProjectiesLogic.BulletPool;
+import ProjectiesLogic.BulletSpawner;
 import SpriteLoader.BulletType16;
 import Utils.Settings;
 import Utils.Utility;
@@ -62,7 +62,7 @@ public class Player extends Entity{
         playerbulletSpawners = new ArrayList<>();
         playerBulletPattern = new PlayerShoot(3 ,5);
         playerbulletConfig = new BulletConfig(
-                List.of(BulletType16.Player_Bullet1 , BulletType16.Player_Bullet2 , BulletType16.Player_Bullet3 , BulletType16.Player_Bullet4),
+                List.of(BulletType16.Player_Bullet1 , BulletType16.Player_Bullet2 , BulletType16.Player_Bullet3 , BulletType16.Player_Bullet4),0,
                 3000,3000,0,0,5,true,false);
 
         BulletSpawner playerBulletSpawner1 = new BulletSpawner(bulletPool,0,0,0,0,- 90,0,0,1,.05,playerbulletConfig,playerBulletPattern);

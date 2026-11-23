@@ -1,5 +1,5 @@
 
-package Projecties;
+package ProjectiesLogic;
 
 //CHANGE THIS CLASS LATER
 
