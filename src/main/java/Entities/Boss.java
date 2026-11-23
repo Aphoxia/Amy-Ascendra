@@ -1,55 +1,58 @@
 package Entities;
 
-import BossStates.BossState;
-import BossStates.Phase1State1Test1;
-import BossStates.Phase1State2Test2;
+import BossStates.*;
+import Managers.GameManager;
 import ProjectiesLogic.BulletPool;
-import ProjectiesLogic.BulletSpawner;
 import Utils.Settings;
 import Utils.Utility;
 import javafx.animation.Interpolator;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Boss extends Entity{
 
-    private final List<BossState> states = List.of(new Phase1State1Test1(bulletPool),new Phase1State2Test2(bulletPool));
+    private BulletPool bossbulletPool;
+
+    private final List<BossState> states;
 
     private final double Phase2Threshold = 0.60;
     private final double Phase3Threshold = 0.30;
 
-    private double hp;
-    private double maxHp;
+    private int hp;
+    private int maxHp;
     private int stateIndex = -1;
+    private int prevstateIndex = -1;
     private BossState currentState;
 
-    private double hitboxPercentage;
+    private final double AmpetudeSwing = 2;
+    private final double AmpetudeSwingTime = 4;
 
     private Interpolator moveEasing;
 
-    private enum MovementMode {
-        NONE, TWEEN, VELOCITY
-    }
-
-    private MovementMode movementMode = MovementMode.NONE;
-
-    private double vx, vy;
     private double startX, startY;
     private double targetX, targetY;
     private double moveDuration, moveElapsed;
+    private boolean isMoving;
 
 
 
-    public Boss(double x , double y , double hitboxPercentage , double visualSize , BulletPool bulletPool){
-        super(x,y,visualSize,bulletPool);
+    public Boss(double x , double y , double hitboxPercentage , double visualSize , BulletPool bossbulletPool){
+        super(x,y,visualSize,hitboxPercentage,bossbulletPool,true);
         this.hitboxPercentage = hitboxPercentage;
-        vx = 0;
-        vy = 0;
         hp = Settings.BOSSHP;
         maxHp = Settings.BOSSHP;
+        this.bossbulletPool = bossbulletPool;
+
+        states = List.of(
+                new Phase1State1(bossbulletPool),
+                new Phase1State2(bossbulletPool),
+                new Phase1State3(bossbulletPool),
+                new Phase3State1(bossbulletPool)
+        );
+
+        currentState = new PHASEENTER(bossbulletPool);
     }
 
     public void render(GraphicsContext gc){
@@ -69,6 +72,9 @@ public class Boss extends Entity{
         if (currentState == null) {
             advanceState();
         }
+        if(!isMoving) {
+            y += (Math.sin(GameManager.instance.getGameTime() * 2)) * AmpetudeSwing / AmpetudeSwingTime ;
+        }
 
         if (currentState.update(this, dt)) {
             advanceState();
@@ -81,9 +87,15 @@ public class Boss extends Entity{
             currentState.exit(this);
         }
 
-        stateIndex = Utility.RandomInt(0,1);
+
+
+        while (stateIndex == prevstateIndex){
+            stateIndex = Utility.RandomInt(0,3);
+        }
         System.out.println(stateIndex);
+
         currentState = states.get(stateIndex);
+        prevstateIndex = stateIndex;
         currentState.enter(this);
 
 //        for (int checked = 0; checked < states.size(); checked++) {
@@ -106,47 +118,47 @@ public class Boss extends Entity{
         this.moveDuration = duration;
         this.moveEasing = moveEasing;
         this.moveElapsed = 0;
+        this.isMoving = true;
 
         if (duration <= 0) {
             x = targetX;
             y = targetY;
-            movementMode = MovementMode.NONE;
-        } else {
-            movementMode = MovementMode.TWEEN;
+            this.isMoving = false;
         }
     }
 
     private void updateMovement(double dt) {
-        switch (movementMode) {
-            case TWEEN :{
-                moveElapsed = Math.min(moveElapsed + dt, moveDuration);
-                double t = moveElapsed / moveDuration;
-                double eased = moveEasing.interpolate(0.0, 1.0, t);
+        if (!isMoving) return;
+        moveElapsed = Math.min(moveElapsed + dt, moveDuration);
+        double t = moveElapsed / moveDuration;
+        double eased = moveEasing.interpolate(0.0, 1.0, t);
 
-                x = startX + (targetX - startX) * eased;
-                y = startY + (targetY - startY) * eased;
+        x = startX + (targetX - startX) * eased;
+        y = startY + (targetY - startY) * eased;
 
-                if (t >= 1) {
-                    x = targetX;
-                    y = targetY;
-                    movementMode = MovementMode.NONE;
-                }
-                break;
-            }
-
-            case VELOCITY : {
-                x += vx * dt;
-                y += vy * dt;
-                break;
-            }
-
-            case NONE :{
-                break;
-            }
+        if (t >= 1) {
+            x = targetX;
+            y = targetY;
+            isMoving = false;
+        }  else{
+            isMoving = true;
         }
     }
+
     public double getHpPercent(){
         if (maxHp == 0) return 1;
         return hp / maxHp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getHp(){
+        return hp;
+    }
+
+    public BulletPool getbossbulletPool(){
+        return bossbulletPool;
     }
 }

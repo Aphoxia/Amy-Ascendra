@@ -3,7 +3,7 @@ package ProjectiesLogic;
 
 
 
-import SpriteLoader.BulletType16;
+import SpriteLoader.BulletType;
 import Utils.Settings;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -17,16 +17,11 @@ public class Bullet {
         private double currentSpeed, maxSpeed;
         private double acceleration;
         private double currentDegree, angularVelocity;
-        private BulletType16 type;
+        private BulletType type;
         private double visualSpinSpeed;
         private double lifetime , age;
         private double Size;
         private double hitboxSize;
-
-
-
-        //TEST
-
 
     public Bullet(){
         isPlayer = false;
@@ -40,7 +35,7 @@ public class Bullet {
         currentDegree = 0;
         angularVelocity = 0;
         visualSpinSpeed = 0;
-        type = BulletType16.Player_Bullet1; //DEFAULT
+        type = BulletType.Player_Bullet1; //DEFAULT
         lifetime = 0;
         age = 0;
     }
@@ -58,7 +53,6 @@ public class Bullet {
         x += vx;
         y += vy;
 
-        //System.out.println(currentSpeed );
 
         //ACTIVE CHECK
         if (x < -50 || x > 1330 || y < -50 || y > 800 || age >= lifetime) {
@@ -66,7 +60,7 @@ public class Bullet {
         }
     }
 
-    public void reset(BulletType16 type,double visualSpinSpeed, double x, double y, double newSpeed, double newAngle , double newAcceleration , double newAngularVelocity , boolean isPlayer , double lifetime) {
+    public void reset(BulletType type, double visualSpinSpeed, double x, double y, double newSpeed, double newAngle , double newAcceleration , double newAngularVelocity , boolean isPlayer , double lifetime) {
         this.type = type;
         this.visualSpinSpeed = visualSpinSpeed;
         this.x = x;
@@ -80,7 +74,7 @@ public class Bullet {
         this.lifetime = lifetime;
         this.age = 0;
         Size = type.visualSize;
-        hitboxSize = type.hitRadiusPecentage;
+        hitboxSize = type.hitRadiusPecentage * type.visualSize;
 
     }
 
@@ -97,16 +91,14 @@ public class Bullet {
         gc.rotate(currentDegree + (age * visualSpinSpeed));
         gc.drawImage(type.sprite,-half , -half, visualRender, visualRender);
 
+
         double hitboxRender = hitboxSize ;
         double hitboxhalf = hitboxRender * .5;
-
 
         if (Settings.DEBUG_DRAW_HITBOXES) {
             gc.setFill(Color.RED);
             gc.fillOval(-hitboxhalf , -hitboxhalf , hitboxRender , hitboxRender);
         }
-
-
 
         gc.restore();
     }

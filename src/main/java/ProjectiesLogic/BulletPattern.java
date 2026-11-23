@@ -1,4 +1,4 @@
-package Pattern;
+package ProjectiesLogic;
 
 public  class BulletPattern {
 

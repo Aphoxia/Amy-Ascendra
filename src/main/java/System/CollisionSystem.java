@@ -6,7 +6,6 @@ import Entities.Player;
 import Managers.GameManager;
 import ProjectiesLogic.Bullet;
 import ProjectiesLogic.BulletPool;
-import Utils.Settings;
 
 import static Utils.Settings.DEBUG_PLAYER_HIT;
 
@@ -27,12 +26,14 @@ public class CollisionSystem {
     }
 
 
-    public static void CheckBullet(BulletPool bulletPool , Entity enitity){
-        for (Bullet b : bulletPool.getBullets()){
+    public static void CheckPlayerHit(BulletPool bulletPool , Entity enitity){
+        for (Bullet b : bulletPool.getActiveBullets()){
             if (!b.isActive()) continue;
 
-            if (checkCollisionCircle(enitity.getx() , enitity.gety(), (enitity.getSize() * enitity.getHitboxPercentage()) ,b.getX() , b.getY() , b.getHitboxSize())){
-            GameManager.getInstance().getScreenShake().trigger(.25 , 12);
+            if (checkCollisionCircle(enitity.getx() , enitity.gety(), (enitity.getVisualSize() * enitity.getHitboxPercentage() / 2) ,b.getX() , b.getY() , b.getHitboxSize() / 2)){
+                //System.out.println(enitity.getVisualSize() * enitity.getHitboxPercentage() + "," + b.getHitboxSize());
+                GameManager.getInstance().getScreenShake().trigger(.25 , 12);
+                b.setActive(false);
             }
 
             if (DEBUG_PLAYER_HIT){
@@ -42,7 +43,19 @@ public class CollisionSystem {
         }
     }
 
-    public static void CheckEntity(Player player , Boss boss){
+    public static void CheckBossHit(BulletPool bulletPool, Boss boss) {
+        for (Bullet b : bulletPool.getActiveBullets()) {
+            if (!b.isActive()) continue;
+
+            if (checkCollisionCircle(boss.getx(), boss.gety(), (boss.getVisualSize() * boss.getHitboxPercentage() / 2), b.getX(), b.getY(), b.getHitboxSize() / 2)) {
+                b.setActive(false);
+                boss.setHp(boss.getHp() - 20);
+                System.out.println(boss.getHp());
+            }
+
+
+        }
+
 
     }
 }

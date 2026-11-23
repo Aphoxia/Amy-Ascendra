@@ -8,20 +8,22 @@ package main;
 
 import Entities.Boss;
 import Managers.GameManager;
-import PrefabPattern.SpinPortal;
-import PrefabPattern.TriFanPortal;
-import ProjectiesLogic.BulletSpawner;
+import PrefabPattern.BaseSpawner;
+import ProjectiesLogic.*;
 import Entities.Player;
-import ProjectiesLogic.BulletPool;
+import SpriteLoader.BulletType;
 import System.CollisionSystem;
 import UI.BackGround;
 import UI.Border;
 import Utils.Settings;
+import Utils.Utility;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Bloom;
 import javafx.scene.paint.Color;
+
+import java.util.List;
 
 public class Game extends AnimationTimer{
     //MAIN GAME CLASS INIT ALL BOSS PLAYER AND STUFF HERE
@@ -36,12 +38,10 @@ public class Game extends AnimationTimer{
     private Player player; //There only 1 player lol
 
     //region TEST
-    private BulletSpawner testBulletSpawner;
-    private BulletSpawner testBulletSpawner2;
-    private BulletPool testBulletPool;
+    private BulletPool testBulletPool = new BulletPool(8192);;
 
-    private TriFanPortal test1;
-    private SpinPortal test2;
+    private BaseSpawner test1;
+    private BaseSpawner test2;
     //endregion
 
     private BulletSpawner playerbulletSpawner;
@@ -64,7 +64,7 @@ public class Game extends AnimationTimer{
     private Border border = new Border();
 
     //ENTITIES
-    private Boss boss = new Boss(640 , 360 , 5 , 64, testBulletPool);
+    private Boss boss = new Boss(Utility.shiftCordX(0), Utility.shiftCordY(800) , 1.25, 32, testBulletPool);
 
     public Game(Canvas canvas) {
         this.canvas = canvas;
@@ -82,9 +82,32 @@ public class Game extends AnimationTimer{
 
 
 
-        testBulletPool = new BulletPool(8192);
-        test1 = new TriFanPortal(0 , 0 , 60 , testBulletPool);
-        test2 = new SpinPortal(650 , 200, 60 ,testBulletPool);
+
+        BulletConfig config1 = new BulletConfig(
+                List.of( BulletType.ENEMY_Star4,
+                        BulletType.ENEMY_Star5,
+                        BulletType.ENEMY_Star6,
+                        BulletType.ENEMY_Star7,
+                        BulletType.ENEMY_Star8),
+                360,75,135,0,0,10,false,false
+        );
+
+        BulletConfig config2 = new BulletConfig(
+                List.of( BulletType.ENEMY_BSTAR1,
+                        BulletType.ENEMY_BSTAR2,
+                        BulletType.ENEMY_BSTAR3,
+                        BulletType.ENEMY_BSTAR4,
+                        BulletType.ENEMY_BSTAR5),
+                360,10,10,60,0,10,false,false
+        );
+
+        BulletPattern pattern1 = new BulletPattern( 25, 360);
+        BulletPattern pattern2 = new BulletPattern( 6, 360);
+        SpawnerConfig spawnerConfig1 = new SpawnerConfig(0 , 240 , 0 , 0, 1, 1);
+        SpawnerConfig spawnerConfig2 = new SpawnerConfig(0 , 80 , 0 , 0, 1, .15);
+
+        test1 = new BaseSpawner(Utility.shiftCordX(0) ,Utility.shiftCordY(0), 60 , .5 , testBulletPool,false , null , 0, config1 , pattern1 , spawnerConfig1);
+        test2 = new BaseSpawner(Utility.shiftCordX(0) ,Utility.shiftCordY(0), 60 , .5 , testBulletPool,false , null , 0, config2 , pattern2, spawnerConfig2);
 
     }
 
@@ -154,17 +177,16 @@ public class Game extends AnimationTimer{
 
         player.render(gc);
         boss.render(gc);
+
         playerbulletPool.renderAll(gc);
         testBulletPool.renderAll(gc);
+
         canvas.setEffect(bloom);
 
         gc.restore();
 
         //UI
         renderUI(gc);
-
-//        test1.Disable();
-//        test2.Disable();
 
 
     }
@@ -187,8 +209,8 @@ public class Game extends AnimationTimer{
 
         //TEST 1
 
-        test1.update(dt);
-        test2.update(dt);
+        //test1.update(dt);
+        //test2.update(dt);
         testBulletPool.updateAll(dt);
 //        testBulletSpawner.update(dt);
 //        testBulletSpawner2.update(dt);
@@ -197,16 +219,15 @@ public class Game extends AnimationTimer{
 //        testBulletSpawner2.setBaseAngle(Math.toDegrees(rad));
 
         //TEST 2
-        CollisionSystem.CheckBullet(testBulletPool , player);
-        test1.Disable();
+        CollisionSystem.CheckPlayerHit(testBulletPool , player);
+
+        CollisionSystem.CheckBossHit(playerbulletPool,boss);
+
 
     }
 
     //GETTER SETTER
 
-    public Player getPlayer(){
-        return player;
-    }
 
     private void renderUI(GraphicsContext gc){
         border.render(gc);

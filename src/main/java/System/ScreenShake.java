@@ -22,11 +22,13 @@ public final class ScreenShake {
 
     public double getX() {
         double fade = duration <= 0 ? 0 : remaining / duration;
-        return Math.sin(elapsed * 90) * strength * fade;
+        double xPattern = (elapsed * 90);
+        return Math.sin(xPattern) * strength * fade;
     }
 
     public double getY() {
         double fade = duration <= 0 ? 0 : remaining / duration;
-        return Math.sin(elapsed * 113 + 1) * strength * fade;
+        double yPattern = elapsed * 113 + 1;
+        return Math.sin(yPattern) * strength * fade;
     }
 }
