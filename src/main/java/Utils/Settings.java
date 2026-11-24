@@ -14,12 +14,13 @@ public class Settings {
 
 
     //STAT
-    public static final double BOSSHP= 50000;
+    public static final int BOSSHP= 75000;
 
 
 
     //DEBUG SETTING
-    public static final boolean DEBUG_DRAW_HITBOXES = true;
+    public static final boolean DEBUG_DRAW_HITBOXES = false;
     public static final boolean DEBUG_PLAYER_HIT = false;
+    public static final boolean DEBUG_BULLET_POOLCOUNT = false;
 
 }

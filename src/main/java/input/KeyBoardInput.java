@@ -30,6 +30,7 @@ public class KeyBoardInput {
     public boolean isHeld(KeyCode code) {
         return code != null && heldKeys.contains(code);
     }
+
     public void clearHeldKeys() {
         heldKeys.clear();
     }

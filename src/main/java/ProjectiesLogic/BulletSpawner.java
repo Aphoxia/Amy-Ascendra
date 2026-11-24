@@ -1,37 +1,35 @@
 package ProjectiesLogic;
 
 import Entities.Player;
-import Pattern.BulletPattern;
+import Utils.Utility;
 import javafx.scene.media.AudioClip;
-
 import java.net.URL;
 
 public class BulletSpawner{
-//SPAWNER SETTINGS
-private final BulletPool bulletPool;
+
+        //SPAWNER SETTINGS
+        private final BulletPool bulletPool;
+
         private boolean isActive;
-        private double x, y;
-        private double vx , vy;
-        private double currentSpeed;
-        private double acceleration;
+        private double x, y; //SPAWNER POS
 
-        private double baseAngle;
-        private double spinSpeed;
+        //SPAWNER BEHAVIOR :>
+        private double baseAngle; //SPAWN AT THIS ANGLE IN DEGREE ( 0 = RIGHT , 90 = DOWN , 180 = LEFT , 270 = UP )
+        private double spinSpeed; //SPIN THE BASE ANGLE
 
-
-
+        private double spawnRandomAngle;
 
         //PATTERN SETTINGS
-        private BulletPattern bpattern;
+        private BulletPattern bPattern;
 
         //BULLET SETTINGS
         private BulletConfig bConfig;
 
         //TIMER
-        public double burstInterval = 0.05; // Time between shots in a burst
-        public int shotsPerBurst = 5;       // How many volleys per burst
-        public double cooldownTime = 1.0;
-        public double timer;
+        public double burstInterval; // TIME BETWEEN INTERVAL
+        public int shotsPerBurst;       // ? PER BURST
+        public double cooldownTime;
+        public double elapse; //OBJECT INSIDE TIMER
 
         //COUNTER
         private int shotsFired;
@@ -47,16 +45,7 @@ private final BulletPool bulletPool;
                 , double x
                 , double y
 
-                , double Speed
-                , double acceleration
-
-                , double baseAngle
-                ,double spinSpeed
-
-                , double burstInterval
-                , int shotsPerBurst
-                , double cooldownTime
-
+                , SpawnerConfig spawnerConfig
                 , BulletConfig bConfig
                 , BulletPattern bPattern){
 
@@ -67,20 +56,18 @@ private final BulletPool bulletPool;
             this.x = x;
             this.y = y;
 
-            this.currentSpeed = Speed;
-            this.acceleration = acceleration;
+            this.spinSpeed = spawnerConfig.getSpinSpeed();
+            this.baseAngle = spawnerConfig.getBaseAngle();
+            this.spawnRandomAngle = spawnerConfig.getSpawnRandomAngle();
 
-            this.spinSpeed = spinSpeed;
-            this.baseAngle = baseAngle;
-
-            this.burstInterval = burstInterval;
-            this.shotsPerBurst = shotsPerBurst;
-            this.cooldownTime = cooldownTime;
+            this.burstInterval = spawnerConfig.getBurstInterval();
+            this.shotsPerBurst = spawnerConfig.getShotsPerBurst();
+            this.cooldownTime = spawnerConfig.getCooldownTime();
 
             this.bConfig = bConfig;
-            this.bpattern = bPattern;
+            this.bPattern = bPattern;
 
-            timer = 0;
+            elapse = 0; //time gone by since reset. Incase I forgot
             shotsFired = 0;
             inCooldown = false;
             isActive = true;
@@ -89,26 +76,26 @@ private final BulletPool bulletPool;
 
         public void update(double dt) {
             if (!isActive) return;
-            timer += dt;
+            elapse += dt;
             baseAngle += spinSpeed * dt;
 
             if (inCooldown) {
-                if (timer >= cooldownTime) {
-                    timer -= cooldownTime;
+                if (elapse >= cooldownTime) {
+                    elapse -= cooldownTime;
                     inCooldown = false;
                     shotsFired = 0;
                 }
                 return;
             }
 
-            while (timer >= burstInterval && !inCooldown) {
-                timer -= burstInterval;
+            while (elapse >= burstInterval && !inCooldown) {
+                elapse -= burstInterval;
                 fire();
                 shotsFired++;
 
                 if (shotsFired >= shotsPerBurst) {
                     inCooldown = true;
-                    timer = 0.0; //RESET
+                    elapse = 0.0; //HOW THIS WORK IS THAT EVERYTIME ITS INCOOLDOWN RESET ELAPSE
                 }
             }
         }
@@ -116,10 +103,9 @@ private final BulletPool bulletPool;
 
 
         private void fire() {
-            //System.out.println(baseAngle);
 
-            double spreadAngle = bpattern.getSpreadAngle();
-            int bulletCount = bpattern.getBulletCount();
+            double spreadAngle = bPattern.getSpreadAngle();
+            int bulletCount = bPattern.getBulletCount();
 
             if (bConfig.isLockon()){
                 baseAngle =  (Math.toDegrees(Math.atan2(Player.getInstance().gety() - y, Player.getInstance().getx() - x)));
@@ -136,9 +122,11 @@ private final BulletPool bulletPool;
                 Bullet b = bulletPool.obtain();
                 if (b == null) return;
 
-                double angle = bulletCount == 1
-                        ? baseAngle
-                        : startAngle + step * i;
+                double angle = bulletCount == 1 ? baseAngle : startAngle + step * i;
+
+                if (spawnRandomAngle > 0){
+                    angle += Utility.RandomDouble(-spawnRandomAngle , spawnRandomAngle);
+                }
 
                 b.reset(bConfig.getRandomType(),bConfig.getVisualSpinSpeed(), x , y , bConfig.getRandomSpeed() ,angle, bConfig.getAcceleration(), bConfig.getAngularVelocity(),
                         bConfig.isPlayerBullet(),bConfig.getLifetime());
@@ -150,18 +138,23 @@ private final BulletPool bulletPool;
             }
         }
 
+        //RESET FUNC
         public void start(){
             if (isActive) return;
+
             isActive = true;
-            timer = 0;
+            elapse = 0;
             shotsFired = 0;
             inCooldown = false;
         }
 
-
         public void stop(){
             isActive = false;
 
+        }
+
+        public BulletConfig getbConfig(){
+            return bConfig;
         }
 
         public void setbConfig(BulletConfig bconfig){
@@ -169,34 +162,96 @@ private final BulletPool bulletPool;
             this.bConfig = bconfig;
         }
 
-        public void setBpattern(BulletPattern bulletPattern){
+        public BulletPattern getbPattern(){
+            return bPattern;
+        }
+
+        public void setbPattern(BulletPattern bulletPattern){
             if (bulletPattern == null) return;
-            this.bpattern = bulletPattern;
+            this.bPattern = bulletPattern;
         }
 
-        public void setX(double x) {
-            this.x = x;
-        }
-
-        public void setY(double y) {
-            this.y = y;
-        }
-
-        public double getX() {
-            return x;
-        }
-
-        public double getY() {
-            return y;
-        }
-
-    public void setBaseAngle(double baseAngle){
-            this.baseAngle = baseAngle;
+        public BulletPool getBulletPool() {
+            return bulletPool;
         }
 
         public void setActive(boolean active){
             this.isActive = active;
         }
 
+        public boolean isActive(){
+            return isActive;
+        }
 
+        public void setX(double x) {
+            this.x = x;
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public void setY(double y) {
+            this.y = y;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public void setBaseAngle(double baseAngle){
+            this.baseAngle = baseAngle;
+        }
+
+        public double getBaseAngle(){
+            return baseAngle;
+        }
+
+        public double getSpawnRandomAngle() {
+            return spawnRandomAngle;
+        }
+
+        public void setSpawnRandomAngle(double spawnRandomAngle){
+            this.spawnRandomAngle = spawnRandomAngle;
+        }
+
+        public void setSpinSpeed(double spinSpeed){
+                this.spinSpeed = spinSpeed;
+        }
+
+        public double getSpinSpeed(){
+            return spinSpeed;
+        }
+
+        public void setBurstInterval(double burstInterval) {
+            this.burstInterval = burstInterval;
+        }
+
+        public double getBurstInterval() {
+            return burstInterval;
+        }
+
+        public void setShotsPerBurst(int shotsPerBurst) {
+            this.shotsPerBurst = shotsPerBurst;
+        }
+
+        public int getShotsFired() {
+            return shotsFired;
+        }
+
+        public void setCooldownTime(double cooldownTime) {
+            this.cooldownTime = cooldownTime;
+        }
+
+        public double getCooldownTime() {
+            return cooldownTime;
+        }
+
+        public boolean isInCooldown() {
+            return inCooldown;
+        }
+
+        public double getElapse() {
+            return elapse;
+        }
 }

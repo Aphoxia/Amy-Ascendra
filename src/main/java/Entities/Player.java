@@ -1,11 +1,8 @@
 package Entities;
 
-import Pattern.BulletPattern;
-import Pattern.PlayerShoot;
-import ProjectiesLogic.BulletConfig;
-import ProjectiesLogic.BulletPool;
-import ProjectiesLogic.BulletSpawner;
-import SpriteLoader.BulletType16;
+import PrefabPattern.BaseSpawner;
+import ProjectiesLogic.*;
+import SpriteLoader.BulletType;
 import Utils.Settings;
 import Utils.Utility;
 import input.KeyBoardInput;
@@ -14,8 +11,9 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Math.max;
 
 
 public class Player extends Entity{
@@ -35,18 +33,26 @@ public class Player extends Entity{
     private boolean shotting;
     private boolean focus;
 
+    private final double INVINCIBLE_TIME = 1;
+    private double invincibleElapse;
+
+    private int maxHitPoint = 20;
+    private int hitpoint;
+
     //Effet
     private DropShadow dropShadow = new DropShadow(4, 0, 2, Color.color(0, 0, 0, 0.65));
 
     //PLAYER BULLET
-
-    private BulletPattern playerBulletPattern;
-    private BulletConfig playerbulletConfig;
-    private ArrayList<BulletSpawner> playerbulletSpawners;
+    private BaseSpawner playerbulletspawner1;
 
 
-    public Player(double x , double y , double size , double hitboxPercentage , BulletPool playerbulletpool){
-        super(x,y,size,playerbulletpool);
+    public Player(double x ,
+                  double y ,
+                  double size ,
+                  double hitboxPercentage ,
+                  BulletPool playerbulletpool){
+
+        super(x,y,size,hitboxPercentage,playerbulletpool,true);
         this.hitboxPercentage = hitboxPercentage;
 
         left = false;
@@ -59,31 +65,33 @@ public class Player extends Entity{
 
         Instance = this;
 
-        playerbulletSpawners = new ArrayList<>();
-        playerBulletPattern = new PlayerShoot(3 ,5);
-        playerbulletConfig = new BulletConfig(
-                List.of(BulletType16.Player_Bullet1 , BulletType16.Player_Bullet2 , BulletType16.Player_Bullet3 , BulletType16.Player_Bullet4),0,
-                3000,3000,0,0,5,true,false);
-
-        BulletSpawner playerBulletSpawner1 = new BulletSpawner(bulletPool,0,0,0,0,- 90,0,0,1,.05,playerbulletConfig,playerBulletPattern);
-        playerbulletSpawners.add(playerBulletSpawner1);
+        invincibleElapse = 0;
+        hitpoint = maxHitPoint;
 
 
+        BulletPattern playerBulletPattern = new BulletPattern(3 ,5);
+        BulletConfig  playerbulletConfig = new BulletConfig(
+                List.of(BulletType.Player_Bullet1 ,
+                        BulletType.Player_Bullet2 ,
+                        BulletType.Player_Bullet3 ,
+                        BulletType.Player_Bullet4),
+                0, 1500,1500,0,0,
+                5,true,false);
+        SpawnerConfig playerSpawnerConfig = new SpawnerConfig(- 90,0,0,0,1,.05);
+        playerbulletspawner1 = new BaseSpawner(x,y,size,hitboxPercentage,bulletPool,true,
+                null,0,playerbulletConfig,playerBulletPattern,playerSpawnerConfig);
+
+        playerbulletspawner1.StartObject();
     }
 
     @Override
     public void update(double dt) {
 
+        logicUpdate(dt);
         updatePos(dt);
         shoot(dt);
-
-        focus = KeyBoardInput.getInstance().isHeld(KeyCode.SHIFT);
-
-        for (BulletSpawner bulletSpawner : playerbulletSpawners){
-            bulletSpawner.setX(x);
-            bulletSpawner.setY(y);
-            bulletSpawner.update(dt);
-        }
+        playerbulletspawner1.setX(x);
+        playerbulletspawner1.setY(y);
     }
 
 
@@ -93,17 +101,17 @@ public class Player extends Entity{
         gc.save();
 
 
-        double drawX = x - (size / 2);
-        double drawY = y - (size / 2);
+        double drawX = x - (visualSize / 2);
+        double drawY = y - (visualSize / 2);
 
         gc.setEffect(dropShadow);
 
         gc.setFill(Color.CYAN);
-        gc.fillOval(drawX, drawY, size,size);
+        gc.fillOval(drawX, drawY, visualSize, visualSize);
 
         gc.setStroke(Color.WHITE);
         gc.setLineWidth(1.5);
-        gc.strokeOval(drawX, drawY, size,size);
+        gc.strokeOval(drawX, drawY, visualSize, visualSize);
 
         //TEST
         //gc.fillRect(100,720 - 32,32,32); 20 of these to fill in the screen
@@ -112,13 +120,18 @@ public class Player extends Entity{
 
         //HITBOX
         if (focus){
-        double coreSize = (size * hitboxPercentage);
+        double coreSize = (visualSize * hitboxPercentage);
         double coreX = x - (coreSize / 2);
         double coreY = y - (coreSize / 2);
         gc.setFill(Color.RED);
         gc.fillOval(coreX , coreY, coreSize, coreSize);
     }
         gc.restore();
+    }
+
+    private void logicUpdate(double dt){
+        focus = KeyBoardInput.getInstance().isHeld(KeyCode.SHIFT);
+        invincibleElapse = max(0,invincibleElapse - dt);
     }
 
     private void updatePos(double dt) {
@@ -162,11 +175,17 @@ public class Player extends Entity{
 
         shotting = KeyBoardInput.getInstance().isHeld(KeyCode.Z);
 
-            for (BulletSpawner bulletSpawner : playerbulletSpawners){
-                bulletSpawner.setActive(shotting);
-            }
+        playerbulletspawner1.update(dt);
+        playerbulletspawner1.getBulletSpawner().setActive(shotting);
+
+
+
         }
 
+
+    public void resetInvincibleElapse(){
+        this.invincibleElapse = this.INVINCIBLE_TIME;
+    }
 
     //GETTER SETTER FOR TESTING (WHY I HAVE TO WRITE TEST)
 
@@ -226,5 +245,17 @@ public class Player extends Entity{
 
     public static Player getInstance() {
         return Instance;
+    }
+
+    public void setHitpoint(int hitpoint) {
+        this.hitpoint = hitpoint;
+    }
+
+    public int getHitpoint(){
+        return hitpoint;
+    }
+
+    public double getInvincibleElapse() {
+        return invincibleElapse;
     }
 }

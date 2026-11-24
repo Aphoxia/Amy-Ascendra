@@ -13,15 +13,13 @@ public class GameManager {
     private double timer;
 
     public GameManager(){
-
-
         timer = 0;
     }
 
     public void update(double dt){
+
         timer += dt;
         screenShake.update(dt);
-        //System.out.println(Math.round(timer));
     }
 
     public static GameManager getInstance() {
@@ -30,5 +28,9 @@ public class GameManager {
 
     public ScreenShake getScreenShake() {
         return screenShake;
+    }
+
+    public double getGameTime(){
+        return timer;
     }
 }

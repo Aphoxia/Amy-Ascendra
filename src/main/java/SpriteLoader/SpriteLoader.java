@@ -32,7 +32,7 @@ public final class SpriteLoader {
         );
     }
 
-    private static Image loadSpriteSheet(String sourcepath) {
+    public static Image loadSpriteSheet(String sourcepath) {
         String imageURL = ClassLoader.getSystemResource(sourcepath).toString();
         return new Image(imageURL, false);
     }

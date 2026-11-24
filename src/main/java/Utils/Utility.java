@@ -34,6 +34,14 @@ public class Utility {
         return new Image(image_path,false);
     }
 
+    public static double shiftCordX(double x){
+        return ((double )Settings.HORIZONTAL_RESOLUTION / 2 + x);
+    }
+
+    public static double shiftCordY(double y){
+        return ((double )Settings.VERTICAL_RESOLUTION / 2 - y);
+    }
+
 
 
 
