@@ -7,6 +7,7 @@ import SpriteLoader.BulletType;
 import Utils.TimedAction;
 import Utils.Utility;
 import javafx.animation.Interpolator;
+import javafx.scene.canvas.GraphicsContext;
 
 
 import java.util.List;
@@ -40,14 +41,13 @@ public class Phase1State3 implements BossState{
                     fanspawner2.StartSpawn();
                 }),
 
-                new TimedAction(2, boss -> boss.moveTo(Utility.shiftCordX(200), Utility.shiftCordY(300), 5, Interpolator.EASE_BOTH)),
+                new TimedAction(2, boss -> boss.moveTo(Utility.shiftCordX(200), Utility.shiftCordY(210), 5, Interpolator.EASE_BOTH)),
 
                 new TimedAction(2.5, boss -> {
                     ringspawner1.StartSpawn();
                     ringspawner2.StartSpawn();
                 }),
-
-                new TimedAction(9, boss -> boss.moveTo(Utility.shiftCordX(-20), Utility.shiftCordY(240), 5, Interpolator.EASE_BOTH))
+                new TimedAction(9, boss -> boss.moveTo(Utility.shiftCordX(-100), Utility.shiftCordY(180), 5, Interpolator.EASE_BOTH))
 
 
 
@@ -98,24 +98,29 @@ public class Phase1State3 implements BossState{
         }
     }
 
+    @Override
+    public void render(GraphicsContext gc) {
+
+    }
+
     private void initSpawner(BulletPool pool){
         BulletConfig bulletConfig1 = new BulletConfig(
                 List.of(BulletType.ENEMY_BSTAR7,
                         BulletType.ENEMY_BSTAR6),
-                180,60,80,0,10,10,false,false);
+                180,100,150,0,10,10,false,false);
 
         BulletConfig bulletConfig2 = new BulletConfig(
                 List.of(BulletType.ENEMY_Star7,
                         BulletType.ENEMY_Star6),
-                360,200,200,0,0,10,false,false);
+                360,300,300,0,0,10,false,false);
 
         BulletConfig bulletConfig3 = new BulletConfig(
                 List.of(BulletType.ENEMY_Star1,
                         BulletType.ENEMY_Star2,
                         BulletType.ENEMY_Star3),
-                360,100,100,0,0,10,false,true);
+                360,200,200,0,0,10,false,true);
 
-        BulletPattern bulletPattern1 = new BulletPattern(5,360);
+        BulletPattern bulletPattern1 = new BulletPattern(10,360);
         BulletPattern bulletPattern2 = new BulletPattern(10,360);
         BulletPattern bulletPattern3 = new BulletPattern(3,25);
 

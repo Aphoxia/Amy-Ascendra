@@ -7,6 +7,7 @@ import SpriteLoader.BulletType;
 import Utils.TimedAction;
 import Utils.Utility;
 import javafx.animation.Interpolator;
+import javafx.scene.canvas.GraphicsContext;
 
 
 import java.util.List;
@@ -39,18 +40,18 @@ public class Phase1State1 implements BossState{
                 }),
                 new TimedAction(2.5, boss -> boss.moveTo(Utility.shiftCordX(Utility.RandomDouble(-200,0)), Utility.shiftCordY(Utility.RandomDouble(0,200)), 1, Interpolator.EASE_OUT)),
 
-                new TimedAction(3.5, boss -> boss.moveTo(Utility.shiftCordX(Utility.RandomDouble(-200,200)), Utility.shiftCordY(Utility.RandomDouble(0,200)), 1, Interpolator.EASE_OUT)),
+
 
                 new TimedAction(4.5, boss -> boss.moveTo(Utility.shiftCordX(Utility.RandomDouble(-200,200)), Utility.shiftCordY(Utility.RandomDouble(0,200)), 1, Interpolator.EASE_OUT)),
 
-                new TimedAction(5.5, boss -> boss.moveTo(Utility.shiftCordX(Utility.RandomDouble(-200,200)), Utility.shiftCordY(Utility.RandomDouble(0,200)), 1, Interpolator.EASE_OUT)),
+
 
                 new TimedAction(6.5, boss -> boss.moveTo(Utility.shiftCordX(Utility.RandomDouble(-200,200)), Utility.shiftCordY(Utility.RandomDouble(0,200)), 1, Interpolator.EASE_OUT)),
 
-                new TimedAction(7.5, boss -> boss.moveTo(Utility.shiftCordX(Utility.RandomDouble(-200,200)), Utility.shiftCordY(Utility.RandomDouble(0,200)), 1, Interpolator.EASE_OUT)),
 
-                new TimedAction(8.5, boss -> boss.moveTo(Utility.shiftCordX(Utility.RandomDouble(-200,200)), Utility.shiftCordY(Utility.RandomDouble(0,200)), 1, Interpolator.EASE_OUT)),
-                new TimedAction(9.5, boss -> boss.moveTo(Utility.shiftCordX(Utility.RandomDouble(-200,200)), Utility.shiftCordY(Utility.RandomDouble(0,200)),1, Interpolator.EASE_OUT))
+
+                new TimedAction(8.5, boss -> boss.moveTo(Utility.shiftCordX(Utility.RandomDouble(-200,200)), Utility.shiftCordY(Utility.RandomDouble(0,200)), 1, Interpolator.EASE_OUT))
+
 
 
         );
@@ -62,7 +63,13 @@ public class Phase1State1 implements BossState{
         nextAction = 0;
 
         for (BaseSpawner spawner : spawners) {
-            spawner.StopSpawn(); // Reset its firing timer/counters.
+            spawner.StopSpawn();
+        }
+    }
+
+    public void render(GraphicsContext gc){
+        for (BaseSpawner spawner : spawners) {
+            spawner.render(gc);
         }
     }
 

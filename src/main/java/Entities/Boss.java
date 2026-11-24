@@ -17,7 +17,7 @@ public class Boss extends Entity{
 
     private final List<BossState> states;
 
-    private final double Phase2Threshold = 0.60;
+    private final double Phase2Threshold = 0.80;
     private final double Phase3Threshold = 0.30;
 
     private int hp;
@@ -30,6 +30,14 @@ public class Boss extends Entity{
     private final double AmpetudeSwingTime = 4;
 
     private Interpolator moveEasing;
+
+    private enum Phase{
+        PHASE1,
+        PHASE2,
+        PHASE3,
+    }
+
+    private Phase phase;
 
     private double startX, startY;
     private double targetX, targetY;
@@ -44,15 +52,22 @@ public class Boss extends Entity{
         hp = Settings.BOSSHP;
         maxHp = Settings.BOSSHP;
         this.bossbulletPool = bossbulletPool;
+        phase = Phase.PHASE1;
 
         states = List.of(
                 new Phase1State1(bossbulletPool),
                 new Phase1State2(bossbulletPool),
                 new Phase1State3(bossbulletPool),
-                new Phase3State1(bossbulletPool)
+                new Phase1State4(bossbulletPool),
+                new Phase1State5(bossbulletPool),
+                new Phase2State1(bossbulletPool),
+                new Phase3State1(bossbulletPool),
+                new Phase2State2(bossbulletPool),
+                new Phase3State2(bossbulletPool)
         );
 
         currentState = new PHASEENTER(bossbulletPool);
+        //currentState = new Phase2State2(bossbulletPool);
     }
 
     public void render(GraphicsContext gc){
@@ -61,6 +76,7 @@ public class Boss extends Entity{
 
         gc.setFill(Color.RED);
         gc.fillRect(x - 32, y - 32 , 64 , 64);
+        currentState.render(gc);
 
         gc.restore();
 
@@ -80,6 +96,15 @@ public class Boss extends Entity{
             advanceState();
         }
 
+        if (getHpPercent() < Phase2Threshold && phase == Phase.PHASE1){
+            currentState.exit(this);
+            phase = Phase.PHASE2;
+            bossbulletPool.clearAll();
+            advanceState();
+        }
+
+        //System.out.println(getHpPercent());
+
     }
 
     private void advanceState() {
@@ -90,9 +115,14 @@ public class Boss extends Entity{
 
 
         while (stateIndex == prevstateIndex){
-            stateIndex = Utility.RandomInt(0,3);
+            switch (phase){
+                case PHASE1 -> stateIndex = Utility.RandomInt(0,4);
+                case PHASE2 -> stateIndex = Utility.RandomInt(5,8);
+            }
+
+
         }
-        System.out.println(stateIndex);
+        //System.out.println(stateIndex);
 
         currentState = states.get(stateIndex);
         prevstateIndex = stateIndex;
@@ -127,6 +157,10 @@ public class Boss extends Entity{
         }
     }
 
+    public void moveToRandom(int duration){
+        moveTo(Utility.shiftCordX(Utility.RandomDouble(-200,200)), Utility.shiftCordY(Utility.RandomDouble(50,300)), duration, Interpolator.EASE_BOTH);
+    }
+
     private void updateMovement(double dt) {
         if (!isMoving) return;
         moveElapsed = Math.min(moveElapsed + dt, moveDuration);
@@ -147,7 +181,7 @@ public class Boss extends Entity{
 
     public double getHpPercent(){
         if (maxHp == 0) return 1;
-        return hp / maxHp;
+        return (double) hp / maxHp;
     }
 
     public void setHp(int hp) {

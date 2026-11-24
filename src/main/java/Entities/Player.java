@@ -13,6 +13,8 @@ import javafx.scene.paint.Color;
 
 import java.util.List;
 
+import static java.lang.Math.max;
+
 
 public class Player extends Entity{
 
@@ -30,6 +32,12 @@ public class Player extends Entity{
     private boolean left,right,up,down;
     private boolean shotting;
     private boolean focus;
+
+    private final double INVINCIBLE_TIME = 1;
+    private double invincibleElapse;
+
+    private int maxHitPoint = 20;
+    private int hitpoint;
 
     //Effet
     private DropShadow dropShadow = new DropShadow(4, 0, 2, Color.color(0, 0, 0, 0.65));
@@ -57,6 +65,9 @@ public class Player extends Entity{
 
         Instance = this;
 
+        invincibleElapse = 0;
+        hitpoint = maxHitPoint;
+
 
         BulletPattern playerBulletPattern = new BulletPattern(3 ,5);
         BulletConfig  playerbulletConfig = new BulletConfig(
@@ -64,12 +75,13 @@ public class Player extends Entity{
                         BulletType.Player_Bullet2 ,
                         BulletType.Player_Bullet3 ,
                         BulletType.Player_Bullet4),
-                0, 3000,3000,0,0,
+                0, 1500,1500,0,0,
                 5,true,false);
         SpawnerConfig playerSpawnerConfig = new SpawnerConfig(- 90,0,0,0,1,.05);
         playerbulletspawner1 = new BaseSpawner(x,y,size,hitboxPercentage,bulletPool,true,
                 null,0,playerbulletConfig,playerBulletPattern,playerSpawnerConfig);
 
+        playerbulletspawner1.StartObject();
     }
 
     @Override
@@ -119,6 +131,7 @@ public class Player extends Entity{
 
     private void logicUpdate(double dt){
         focus = KeyBoardInput.getInstance().isHeld(KeyCode.SHIFT);
+        invincibleElapse = max(0,invincibleElapse - dt);
     }
 
     private void updatePos(double dt) {
@@ -169,6 +182,10 @@ public class Player extends Entity{
 
         }
 
+
+    public void resetInvincibleElapse(){
+        this.invincibleElapse = this.INVINCIBLE_TIME;
+    }
 
     //GETTER SETTER FOR TESTING (WHY I HAVE TO WRITE TEST)
 
@@ -228,5 +245,17 @@ public class Player extends Entity{
 
     public static Player getInstance() {
         return Instance;
+    }
+
+    public void setHitpoint(int hitpoint) {
+        this.hitpoint = hitpoint;
+    }
+
+    public int getHitpoint(){
+        return hitpoint;
+    }
+
+    public double getInvincibleElapse() {
+        return invincibleElapse;
     }
 }

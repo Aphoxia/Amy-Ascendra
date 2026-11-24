@@ -14,7 +14,7 @@ public class Settings {
 
 
     //STAT
-    public static final int BOSSHP= 50000;
+    public static final int BOSSHP= 75000;
 
 
 

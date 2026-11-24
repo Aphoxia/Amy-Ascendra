@@ -6,6 +6,7 @@ import ProjectiesLogic.BulletSpawner;
 import Utils.TimedAction;
 import Utils.Utility;
 import javafx.animation.Interpolator;
+import javafx.scene.canvas.GraphicsContext;
 
 import java.util.List;
 
@@ -54,5 +55,10 @@ public class PHASEENTER implements BossState{
         for (BulletSpawner spawner : spawners) {
             spawner.setActive(false);
         }
+    }
+
+    @Override
+    public void render(GraphicsContext gc) {
+
     }
 }

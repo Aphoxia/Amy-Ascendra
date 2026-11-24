@@ -53,9 +53,9 @@ public class Bullet {
         x += vx;
         y += vy;
 
-
+        //x < -50 || x > 1330 || y < -50 || y > 800 ||
         //ACTIVE CHECK
-        if (x < -50 || x > 1330 || y < -50 || y > 800 || age >= lifetime) {
+        if ( age >= lifetime) {
             active = false;
         }
     }

@@ -3,13 +3,18 @@ package PrefabPattern;
 import Entities.Entity;
 import Managers.GameManager;
 import ProjectiesLogic.*;
+import Utils.Settings;
+import Utils.Utility;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
 public class BaseSpawner extends Entity {
 
-    protected final Image sprite;
+    protected Image sprite;
     protected final double visualSpinSpeed;
+
+    protected boolean active;
 
     protected BulletSpawner bulletSpawner;
 
@@ -27,6 +32,7 @@ public class BaseSpawner extends Entity {
         super(x,y,visualSize,hitboxPercentage,bulletPool,canHit);
         this.sprite = sprite;
         this.visualSpinSpeed = visualSpinSpeed;
+        active = false;
 
         bulletSpawner = new BulletSpawner(bulletPool,x,y,spawnerConfig,bulletConfig,bulletPattern);
     }
@@ -35,15 +41,17 @@ public class BaseSpawner extends Entity {
 
 
     public void update(double dt) {
+        if (!active) return;
         bulletSpawner.update(dt);
+
     }
 
 
     public void render(GraphicsContext gc) {
 
-        if (sprite == null) return;
+        if (sprite == null || !active) return;
 
-        gc.save();
+
         double visualRender = visualSize ;
         double half = visualRender * 0.5;
 
@@ -54,16 +62,35 @@ public class BaseSpawner extends Entity {
         gc.rotate(GameManager.instance.getGameTime() * visualSpinSpeed);
         gc.drawImage(sprite, -half , -half, visualRender, visualRender);
 
+        double hitboxRender = visualRender * hitboxPercentage ;
+        double hitboxhalf = hitboxRender * .5;
+
+        if (Settings.DEBUG_DRAW_HITBOXES) {
+            gc.setFill(Color.RED);
+            gc.fillOval(-hitboxhalf , -hitboxhalf , hitboxRender , hitboxRender);
+        }
+
         gc.restore();
 
     }
 
     public void StopSpawn(){
+
         bulletSpawner.stop();
     }
 
     public void StartSpawn(){
+        active = true;
         bulletSpawner.start();
+    }
+
+    public void StartObject() {
+        active = true;
+    }
+
+    public void StopObject() {
+        bulletSpawner.stop();
+        active = false;
     }
 
     public BulletSpawner getBulletSpawner() {
@@ -79,5 +106,9 @@ public class BaseSpawner extends Entity {
     public void setY(double y) {
         super.setY(y);
         bulletSpawner.setY(y);
+    }
+
+    public boolean isActive() {
+        return active;
     }
 }

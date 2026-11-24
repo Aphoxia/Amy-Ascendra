@@ -34,6 +34,7 @@ public class BoundSpawner extends BaseSpawner {
     }
 
     public void update(double dt) {
+        if (!active) return;
         super.update(dt);
         moveLogic(dt);
     }
@@ -43,15 +44,15 @@ public class BoundSpawner extends BaseSpawner {
     }
 
     private void moveLogic(double dt){
-        x += vx;
-        y += vy;
+        x += vx * dt;
+        y += vy * dt;
 
         double offset = 50;
 
-        if (x < -offset ) x = Settings.PlayAreaX + offset;
-        if (x > Settings.PlayAreaX + offset ) x = -offset;
-        if (y < -offset ) y = Settings.PlayAreaY + offset;
-        if (y > Settings.PlayAreaY  + offset ) y = -offset;
+        if (x < -offset + (640 - 270) ) x = 640 + 270 + offset - 10;
+        if (x > 640 + 270 + offset ) x = -offset + (640 - 270) + 10;
+        if (y < -offset ) y = Settings.PlayAreaY + offset - 10;
+        if (y > Settings.PlayAreaY  + offset ) y = -offset + 10;
 
         bulletSpawner.setX(x);
         bulletSpawner.setY(y);

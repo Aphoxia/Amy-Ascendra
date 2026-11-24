@@ -7,13 +7,14 @@ import SpriteLoader.BulletType;
 import Utils.TimedAction;
 import Utils.Utility;
 import javafx.animation.Interpolator;
+import javafx.scene.canvas.GraphicsContext;
 
 
 import java.util.List;
 
 public class Phase1State2 implements BossState{
 
-    private final double DURATION = 10;
+    private final double DURATION = 12;
 
     //SPAWNER SETTINGS
     private BaseSpawner ringspawner1;
@@ -32,12 +33,14 @@ public class Phase1State2 implements BossState{
         spawners = List.of(ringspawner1,ringspawner2);
 
         actions = List.of(
-                new TimedAction(0.0, boss -> boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(250), 1, Interpolator.EASE_OUT)),
+                new TimedAction(0.0, boss -> boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(250), .5, Interpolator.EASE_OUT)),
 
                 new TimedAction(1, boss -> {
                     ringspawner1.StartSpawn();
                     ringspawner2.StartSpawn();
-                })
+                }),
+                new TimedAction(5, boss -> boss.moveToRandom(5))
+
 
 
 
@@ -51,7 +54,13 @@ public class Phase1State2 implements BossState{
         nextAction = 0;
 
         for (BaseSpawner spawner : spawners) {
-            spawner.StopSpawn(); // Reset its firing timer/counters.
+            spawner.StopSpawn();
+        }
+    }
+
+    public void render(GraphicsContext gc){
+        for (BaseSpawner spawner : spawners) {
+            spawner.render(gc);
         }
     }
 
