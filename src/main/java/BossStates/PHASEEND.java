@@ -14,7 +14,7 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.List;
 
 public class PHASEEND implements BossState{
-    private final double DURATION = .15;
+    private final double DURATION = 3;
 
     private final List<BulletSpawner> spawners;
     private final List<TimedAction> actions;

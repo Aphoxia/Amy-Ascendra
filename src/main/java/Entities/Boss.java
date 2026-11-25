@@ -69,6 +69,8 @@ public class Boss extends Entity{
                 new Phase2State2(bossbulletPool),
                 new Phase2State3(bossbulletPool),
                 new Phase2State4(bossbulletPool),
+                new Phase2State5(bossbulletPool),
+                new Phase2State6(bossbulletPool),
                 new Phase2_3Shared(bossbulletPool),
                 new Phase3State1(bossbulletPool),
                 new Phase3State2(bossbulletPool)
@@ -135,8 +137,8 @@ public class Boss extends Entity{
         while (stateIndex == prevstateIndex){
             switch (phase){
                 case PHASE1 -> stateIndex = Utility.RandomInt(0,5);
-                case PHASE2 -> stateIndex = Utility.RandomInt(6,10);
-                case PHASE3 -> stateIndex = Utility.RandomInt(10,12);
+                case PHASE2 -> stateIndex = Utility.RandomInt(6,12);
+                case PHASE3 -> stateIndex = Utility.RandomInt(12,14);
             }
 
 
@@ -183,8 +185,8 @@ public class Boss extends Entity{
     private void updateMovement(double dt) {
         if (!isMoving) return;
         moveElapsed = Math.min(moveElapsed + dt, moveDuration);
-        double t = moveElapsed / moveDuration;
-        double eased = moveEasing.interpolate(0.0, 1.0, t);
+        double t = moveDuration <= 0.0  ? 1.0 : moveElapsed / moveDuration;
+        double eased = Utility.easeOutCubic(t);
 
         x = startX + (targetX - startX) * eased;
         y = startY + (targetY - startY) * eased;

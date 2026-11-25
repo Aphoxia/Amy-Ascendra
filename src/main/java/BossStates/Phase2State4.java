@@ -24,8 +24,6 @@ public class Phase2State4 implements BossState{
     private BaseSpawner SmallStar1;
     private BaseSpawner SmallStar2;
 
-    private BaseSpawner ringSpawner1;
-
     private final List<BaseSpawner> spawners;
     private final List<TimedAction> actions;
 

@@ -8,12 +8,16 @@ import Utils.Settings;
 import Utils.Utility;
 import input.KeyBoardInput;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static Utils.Utility.*;
 import static java.lang.Math.max;
 
 
@@ -37,8 +41,16 @@ public class Player extends Entity{
     private final double INVINCIBLE_TIME = 1;
     private double invincibleElapse;
 
-    private int maxHitPoint = 20;
+    private int maxHitPoint = 30;
     private int hitpoint;
+
+
+    private final Image[] sprites = new Image[4];
+    private int spriteIndex = 0;
+    private int spriteCounter = 0;
+    private int animationSpeed = 30;
+
+
 
     //Effet
     private DropShadow dropShadow = new DropShadow(4, 0, 2, Color.color(0, 0, 0, 0.65));
@@ -56,6 +68,10 @@ public class Player extends Entity{
         super(x,y,size,hitboxPercentage,playerbulletpool,true);
         this.hitboxPercentage = hitboxPercentage;
 
+        sprites[0] = Utility.loadSprite("Images/Player/AmySpriteAnimation1.png");
+        sprites[1] = Utility.loadSprite("Images/Player/AmySpriteAnimation2.png");
+        sprites[2] = Utility.loadSprite("Images/Player/AmySpriteAnimation3.png");
+        sprites[3] = Utility.loadSprite("Images/Player/AmySpriteAnimation4.png");
         left = false;
         right = false;
         up = false;
@@ -102,27 +118,49 @@ public class Player extends Entity{
     public void render(GraphicsContext gc) {
 
         gc.save();
+        if(focus){
+            gc.setGlobalAlpha(.5);
+        }
 
+        if (invincibleElapse > 0) {
+            // Flicker every ~0.08 seconds (adjust multiplier to change blink speed)
+            boolean visiblePhase = ((int)(invincibleElapse * 15) % 2) == 0;
+            gc.setGlobalAlpha((visiblePhase ? 1.0 : 0.3));
+        } else {
+            if(focus){
+                gc.setGlobalAlpha(.5);
+            } else{
+                gc.setGlobalAlpha(1);
+            }
+        }
 
         double drawX = x - (visualSize / 2);
         double drawY = y - (visualSize / 2);
 
         gc.setEffect(dropShadow);
 
-        gc.setFill(Color.CYAN);
-        gc.fillOval(drawX, drawY, visualSize, visualSize);
 
-        gc.setStroke(Color.WHITE);
-        gc.setLineWidth(1.5);
-        gc.strokeOval(drawX, drawY, visualSize, visualSize);
+        gc.drawImage(sprites[spriteIndex],drawX,drawY);
+            spriteCounter++;
 
-        //TEST
-        //gc.fillRect(100,720 - 32,32,32); 20 of these to fill in the screen
+            if (spriteCounter >= animationSpeed) {
+                spriteIndex++;
+
+                // Loop back to the first image (0) after the 4th image (3)
+                if (spriteIndex >= sprites.length) {
+                    spriteIndex = 0;
+                }
+
+                spriteCounter = 0; // Reset counter
+
+        }
+
 
 
 
         //HITBOX
         if (focus){
+            gc.setGlobalAlpha(1);
         double coreSize = (visualSize * hitboxPercentage);
         double coreX = x - (coreSize / 2);
         double coreY = y - (coreSize / 2);
@@ -163,7 +201,7 @@ public class Player extends Entity{
 
         if (!isMoving) return;
 
-        double norm = Utility.Normalize(xDir , yDir);
+        double norm = Normalize(xDir , yDir);
         //Utilities should return 1 or .707 if I am not wrong.
 
         x = (x + (movementSpeed * norm * xDir * dt));

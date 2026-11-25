@@ -60,7 +60,7 @@ public class Game extends AnimationTimer{
     private int framesThisSecond = 0;
     private int updatesThisSecond = 0;
 
-    private Bloom bloom = new Bloom(.5);
+    private Bloom bloom = new Bloom(.9);
 
     //GRAPHIC
     private BackGround background = new BackGround();
@@ -80,7 +80,7 @@ public class Game extends AnimationTimer{
     private void initClasses(){
 
         playerbulletPool = new BulletPool(1024);
-        player = new Player((float) Settings.HORIZONTAL_RESOLUTION / 2 , (float) Settings.VERTICAL_RESOLUTION * 6 / 8 , 16 , .5 ,playerbulletPool);
+        player = new Player((float) Settings.HORIZONTAL_RESOLUTION / 2 , (float) Settings.VERTICAL_RESOLUTION * 6 / 8 , 128 , .048 ,playerbulletPool);
         SoundManager.instance.load();
         SoundManager.instance.setBusVolume(SoundBus.MUSIC,1);
 

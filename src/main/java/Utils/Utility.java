@@ -42,6 +42,16 @@ public class Utility {
         return ((double )Settings.VERTICAL_RESOLUTION / 2 - y);
     }
 
+    public static double smoothStep(double t) {
+        t = Math.max(0.0, Math.min(1.0, t));
+        return t * t * (3.0 - 2.0 * t);
+    }
+
+    public static double easeOutCubic(double t) {
+        t = Math.max(0.0, Math.min(1.0, t));
+        return 1.0 - Math.pow(1.0 - t, 3.0);
+    }
+
 
 
 

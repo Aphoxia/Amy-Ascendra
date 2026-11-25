@@ -147,8 +147,8 @@ public class Phase2State1 implements BossState{
 
         BulletPattern pattern1 = new BulletPattern( 1, 0);
 
-        SpawnerConfig spawnerConfig1 = new SpawnerConfig(0 , 0 , 10 , 0, 1, .5);
-        SpawnerConfig spawnerConfig2 = new SpawnerConfig(180 , 0 , 10 , 0, 1, .5);
+        SpawnerConfig spawnerConfig1 = new SpawnerConfig(0 , 0 , 10 , 0, 1, .25);
+        SpawnerConfig spawnerConfig2 = new SpawnerConfig(180 , 0 , 10 , 0, 1, .25);
 
 
         edge1 = new BaseSpawner(Utility.shiftCordX(-270) ,Utility.shiftCordY(0), 60 , .5 , pool,false , null , 0, config1 , pattern1 , spawnerConfig1);
@@ -169,8 +169,8 @@ public class Phase2State1 implements BossState{
                 180,200,200,0,10,6,false,false
         );
 
-        BulletPattern pattern2 = new BulletPattern( 30, 360);
-        SpawnerConfig spawnerConfig3 = new SpawnerConfig(90 , 75 , 0 , .2, 3, 2);
+        BulletPattern pattern2 = new BulletPattern( 30, 180);
+        SpawnerConfig spawnerConfig3 = new SpawnerConfig(90 , 0 , 0 , .2, 3, 2);
 
         ringspawner1 = new BaseSpawner(Utility.shiftCordX(0) ,Utility.shiftCordY(360), 60 , .5 , pool,false , null , 0, config2 , pattern2, spawnerConfig3);
 
