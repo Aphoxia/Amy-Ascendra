@@ -1,6 +1,8 @@
 package ProjectiesLogic;
 
 import Entities.Player;
+import Managers.SoundManager;
+import Sound.SoundId;
 import Utils.Utility;
 import javafx.scene.media.AudioClip;
 import java.net.URL;
@@ -35,9 +37,9 @@ public class BulletSpawner{
         private int shotsFired;
         private boolean inCooldown;
 
+        private SoundId soundId;
+
         //TEST FOR NOW
-        URL resource =  ClassLoader.getSystemResource("Sound/ShootingSound/StarShoot1.wav");
-        AudioClip clip = new AudioClip(resource.toExternalForm());
 
         public  BulletSpawner(
                 BulletPool bulletPool
@@ -71,6 +73,9 @@ public class BulletSpawner{
             shotsFired = 0;
             inCooldown = false;
             isActive = true;
+
+            soundId = SoundId.STAR_SHOT;
+
 
         }
 
@@ -132,8 +137,9 @@ public class BulletSpawner{
                         bConfig.isPlayerBullet(),bConfig.getLifetime());
 
                 //TEST AUDIO CLIP
-                clip.setVolume(.5);
-                clip.play();
+                if (soundId != null){
+                    SoundManager.instance.play(soundId);
+                }
 
             }
         }
@@ -254,4 +260,8 @@ public class BulletSpawner{
         public double getElapse() {
             return elapse;
         }
+
+    public void setSoundId(SoundId soundId) {
+        this.soundId = soundId;
+    }
 }

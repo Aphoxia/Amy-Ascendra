@@ -1,6 +1,7 @@
 package BossStates;
 
 import Entities.Boss;
+import Managers.SoundManager;
 import ProjectiesLogic.BulletPool;
 import ProjectiesLogic.BulletSpawner;
 import Utils.TimedAction;
@@ -11,7 +12,7 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.List;
 
 public class PHASEENTER implements BossState{
-    private final double DURATION = 10;
+    private final double DURATION = 7.5;
 
     private final List<BulletSpawner> spawners;
     private final List<TimedAction> actions;
@@ -23,7 +24,8 @@ public class PHASEENTER implements BossState{
 
         spawners = List.of();
         actions = List.of(
-                new TimedAction(0.0, boss -> boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(250), 7.5, Interpolator.EASE_OUT))
+                new TimedAction(0.0, boss -> boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(250), 5, Interpolator.EASE_OUT)),
+                new TimedAction(6, boss -> SoundManager.instance.playMusic("Sound/Music/BossPhase3.mp3"))
         );
     }
 

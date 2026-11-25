@@ -1,0 +1,71 @@
+package BossStates;
+
+import Entities.Boss;
+import Managers.GameManager;
+import Managers.SoundManager;
+import ProjectiesLogic.BulletPool;
+import ProjectiesLogic.BulletSpawner;
+import Sound.SoundId;
+import Utils.TimedAction;
+import Utils.Utility;
+import javafx.animation.Interpolator;
+import javafx.scene.canvas.GraphicsContext;
+
+import java.util.List;
+
+public class PHASEEND implements BossState{
+    private final double DURATION = .15;
+
+    private final List<BulletSpawner> spawners;
+    private final List<TimedAction> actions;
+
+    private double elapsed;
+    private int nextAction;
+
+    public PHASEEND(BulletPool pool) {
+
+        spawners = List.of();
+        actions = List.of(
+                new TimedAction(0.0, boss -> {
+                    boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(250), 1.5, Interpolator.EASE_OUT);
+                    SoundManager.instance.play(SoundId.BOSSCLEARSCREEN);
+                    GameManager.getInstance().getScreenShake().trigger(.25 , 18);})
+
+        );
+    }
+
+    public void enter(Boss boss) {
+        elapsed = 0;
+        nextAction = 0;
+
+        for (BulletSpawner spawner : spawners) {
+            spawner.stop();
+        }
+    }
+
+    public boolean update(Boss boss, double dt) {
+        elapsed += dt;
+
+        while (nextAction < actions.size()
+                && elapsed >= actions.get(nextAction).getTime()) {
+            actions.get(nextAction++).run(boss);
+        }
+
+        for (BulletSpawner spawner : spawners) {
+            spawner.update(dt);
+        }
+
+        return elapsed >= DURATION;
+    }
+
+    public void exit(Boss boss) {
+        for (BulletSpawner spawner : spawners) {
+            spawner.setActive(false);
+        }
+    }
+
+    @Override
+    public void render(GraphicsContext gc) {
+
+    }
+}

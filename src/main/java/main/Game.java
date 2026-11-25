@@ -8,13 +8,16 @@ package main;
 
 import Entities.Boss;
 import Managers.GameManager;
+import Managers.SoundManager;
 import PrefabPattern.BaseSpawner;
 import ProjectiesLogic.*;
 import Entities.Player;
+import Sound.SoundBus;
 import SpriteLoader.BulletType;
 import System.CollisionSystem;
 import UI.BackGround;
 import UI.Border;
+import UI.Healthbar;
 import Utils.Settings;
 import Utils.Utility;
 import javafx.animation.AnimationTimer;
@@ -61,6 +64,7 @@ public class Game extends AnimationTimer{
 
     //GRAPHIC
     private BackGround background = new BackGround();
+    private Healthbar healthbar = new Healthbar();
     private Border border = new Border();
 
     //ENTITIES
@@ -77,7 +81,8 @@ public class Game extends AnimationTimer{
 
         playerbulletPool = new BulletPool(1024);
         player = new Player((float) Settings.HORIZONTAL_RESOLUTION / 2 , (float) Settings.VERTICAL_RESOLUTION * 6 / 8 , 16 , .5 ,playerbulletPool);
-
+        SoundManager.instance.load();
+        SoundManager.instance.setBusVolume(SoundBus.MUSIC,1);
 
 
 
@@ -231,6 +236,7 @@ public class Game extends AnimationTimer{
 
     private void renderUI(GraphicsContext gc){
         border.render(gc);
+        healthbar.render(gc);
     }
 
 

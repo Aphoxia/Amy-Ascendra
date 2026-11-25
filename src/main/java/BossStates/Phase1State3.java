@@ -116,17 +116,18 @@ public class Phase1State3 implements BossState{
 
         BulletConfig bulletConfig3 = new BulletConfig(
                 List.of(BulletType.ENEMY_Star1,
-                        BulletType.ENEMY_Star2,
-                        BulletType.ENEMY_Star3),
-                360,200,200,0,0,10,false,true);
+                        BulletType.ENEMY_Star11,
+                        BulletType.ENEMY_Star12,
+                        BulletType.ENEMY_Star13),
+                360,200,250,0,0,10,false,true);
 
         BulletPattern bulletPattern1 = new BulletPattern(10,360);
         BulletPattern bulletPattern2 = new BulletPattern(10,360);
-        BulletPattern bulletPattern3 = new BulletPattern(3,25);
+        BulletPattern bulletPattern3 = new BulletPattern(3,30);
 
         SpawnerConfig spawnerConfig1 = new SpawnerConfig(0,60,0,0,1,3);
         SpawnerConfig spawnerConfig2 = new SpawnerConfig(0,30,0,0,1,1);
-        SpawnerConfig spawnerConfig3 = new SpawnerConfig(0,0,0,.5,3,1);
+        SpawnerConfig spawnerConfig3 = new SpawnerConfig(0,0,0,.25,6,1);
 
         ringspawner1 = new BaseSpawner(0,0,32,.5,pool,false,null,1,bulletConfig1,
                 bulletPattern1,spawnerConfig1);

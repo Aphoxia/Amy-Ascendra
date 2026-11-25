@@ -4,9 +4,11 @@ import Entities.Boss;
 import Entities.Entity;
 import Entities.Player;
 import Managers.GameManager;
+import Managers.SoundManager;
 import PrefabPattern.BaseSpawner;
 import ProjectiesLogic.Bullet;
 import ProjectiesLogic.BulletPool;
+import Sound.SoundId;
 
 import static Utils.Settings.DEBUG_PLAYER_HIT;
 
@@ -39,6 +41,7 @@ public class CollisionSystem {
 
                 player.setHitpoint(player.getHitpoint() - 1);
                 player.resetInvincibleElapse();
+                SoundManager.instance.play(SoundId.PLAYER_HIT);
 
                 if (DEBUG_PLAYER_HIT){
                     System.out.println("PLAYER GOT HIT");
@@ -74,7 +77,7 @@ public class CollisionSystem {
             player.setHitpoint(player.getHitpoint() - 1);
             player.resetInvincibleElapse();
             GameManager.getInstance().getScreenShake().trigger(.25 , 18);
-
+            SoundManager.instance.play(SoundId.PLAYER_HIT);
             if (DEBUG_PLAYER_HIT){
                 System.out.println("PLAYER GOT HIT");
                 System.out.println(player.getHitpoint());

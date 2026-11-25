@@ -15,9 +15,11 @@ public class Boss extends Entity{
 
     private BulletPool bossbulletPool;
 
+    public static Boss instance;
+
     private final List<BossState> states;
 
-    private final double Phase2Threshold = 0.80;
+    private final double Phase2Threshold = 0.70;
     private final double Phase3Threshold = 0.30;
 
     private int hp;
@@ -25,6 +27,7 @@ public class Boss extends Entity{
     private int stateIndex = -1;
     private int prevstateIndex = -1;
     private BossState currentState;
+    private final BossState PHASEEND= new PHASEEND(bulletPool);
 
     private final double AmpetudeSwing = 2;
     private final double AmpetudeSwingTime = 4;
@@ -48,6 +51,7 @@ public class Boss extends Entity{
 
     public Boss(double x , double y , double hitboxPercentage , double visualSize , BulletPool bossbulletPool){
         super(x,y,visualSize,hitboxPercentage,bossbulletPool,true);
+        instance = this;
         this.hitboxPercentage = hitboxPercentage;
         hp = Settings.BOSSHP;
         maxHp = Settings.BOSSHP;
@@ -60,14 +64,19 @@ public class Boss extends Entity{
                 new Phase1State3(bossbulletPool),
                 new Phase1State4(bossbulletPool),
                 new Phase1State5(bossbulletPool),
+                new Phase1State6(bossbulletPool),
                 new Phase2State1(bossbulletPool),
-                new Phase3State1(bossbulletPool),
                 new Phase2State2(bossbulletPool),
+                new Phase2State3(bossbulletPool),
+                new Phase2State4(bossbulletPool),
+                new Phase2_3Shared(bossbulletPool),
+                new Phase3State1(bossbulletPool),
                 new Phase3State2(bossbulletPool)
         );
 
         currentState = new PHASEENTER(bossbulletPool);
-        //currentState = new Phase2State2(bossbulletPool);
+        //TESTING
+        //currentState = new Phase2State5(bossbulletPool);
     }
 
     public void render(GraphicsContext gc){
@@ -100,7 +109,16 @@ public class Boss extends Entity{
             currentState.exit(this);
             phase = Phase.PHASE2;
             bossbulletPool.clearAll();
-            advanceState();
+            currentState = PHASEEND;
+            currentState.enter(this);
+        }
+
+        if (getHpPercent() < Phase3Threshold && phase == Phase.PHASE2){
+            currentState.exit(this);
+            phase = Phase.PHASE3;
+            bossbulletPool.clearAll();
+            currentState = PHASEEND;
+            currentState.enter(this);
         }
 
         //System.out.println(getHpPercent());
@@ -116,8 +134,9 @@ public class Boss extends Entity{
 
         while (stateIndex == prevstateIndex){
             switch (phase){
-                case PHASE1 -> stateIndex = Utility.RandomInt(0,4);
-                case PHASE2 -> stateIndex = Utility.RandomInt(5,8);
+                case PHASE1 -> stateIndex = Utility.RandomInt(0,5);
+                case PHASE2 -> stateIndex = Utility.RandomInt(6,10);
+                case PHASE3 -> stateIndex = Utility.RandomInt(10,12);
             }
 
 
@@ -157,7 +176,7 @@ public class Boss extends Entity{
         }
     }
 
-    public void moveToRandom(int duration){
+    public void moveToRandom(double duration){
         moveTo(Utility.shiftCordX(Utility.RandomDouble(-200,200)), Utility.shiftCordY(Utility.RandomDouble(50,300)), duration, Interpolator.EASE_BOTH);
     }
 

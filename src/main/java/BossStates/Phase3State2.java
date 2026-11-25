@@ -1,8 +1,11 @@
 package BossStates;
 
 import Entities.Boss;
+import Managers.GameManager;
+import Managers.SoundManager;
 import PrefabPattern.BaseSpawner;
 import ProjectiesLogic.*;
+import Sound.SoundId;
 import SpriteLoader.BulletType;
 import Utils.TimedAction;
 import Utils.Utility;
@@ -35,8 +38,10 @@ public class Phase3State2 implements BossState{
 
         actions = List.of(
                 new TimedAction(0.0, boss -> {
-                    boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(250), 1, Interpolator.EASE_BOTH);
+                    boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(0), 1, Interpolator.EASE_BOTH);
                     boss.getbossbulletPool().clearAll();
+                    GameManager.getInstance().getScreenShake().trigger(.25 , 18);
+                    SoundManager.instance.play(SoundId.BOSSCLEARSCREEN);
                 }),
                 new TimedAction( 1.5 , boss -> {
                     ringspawner1.StartSpawn();
@@ -45,12 +50,10 @@ public class Phase3State2 implements BossState{
                     ringspawner3.StartSpawn();
                     ringspawner2.StartSpawn();
                 }),
-                new TimedAction( 2 , boss -> boss.moveToRandom(5)),
 
                 new TimedAction( 15 , boss -> {
                     ringspawner1.StopSpawn();
                 }),
-                new TimedAction( 10 , boss -> boss.moveToRandom(5)),
                 new TimedAction( 18 , boss -> {
                     ringspawner2.StopSpawn();
                     ringspawner3.StopSpawn();

@@ -2,9 +2,11 @@ package BossStates;
 
 import Entities.Boss;
 import Entities.Player;
+import Managers.SoundManager;
 import PrefabPattern.BaseSpawner;
 import PrefabPattern.BoundSpawner;
 import ProjectiesLogic.*;
+import Sound.SoundId;
 import SpriteLoader.BulletType;
 import SpriteLoader.SpriteLoader;
 import Utils.TimedAction;
@@ -77,7 +79,9 @@ public class Phase3State1 implements BossState{
 
         actions = List.of(
                 new TimedAction(0.0, boss -> {
+
                     boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(220), 2, Interpolator.EASE_BOTH);
+
                 }),
                 new TimedAction( 2 , boss -> {
                     edge1.StartSpawn();
@@ -131,7 +135,7 @@ public class Phase3State1 implements BossState{
                 }),
                 new TimedAction( 23 , boss -> {
                     DisableAllSpawner();
-                boss.getbossbulletPool().clearAll();})
+                })
 
 
         );
@@ -143,6 +147,9 @@ public class Phase3State1 implements BossState{
 
         for (BaseSpawner spawner : spawners) {
             spawner.StopSpawn(); // Reset its firing timer/counters.
+            if (spawner instanceof BoundSpawner boundSpawner){
+                boundSpawner.ResetMove();
+            }
         }
     }
 
@@ -225,7 +232,7 @@ public class Phase3State1 implements BossState{
         );
 
         BulletPattern pattern2 = new BulletPattern( 1, 360);
-        SpawnerConfig spawnerConfig3 = new SpawnerConfig(0 , 30 , 0 , 0, 1, 3);
+        SpawnerConfig spawnerConfig3 = new SpawnerConfig(0 , 30 , 0 , 0, 1, 6);
 
         Image image = SpriteLoader.loadSprite("Images/Bullets/BulletSpriteSheet.png",32,32,13,0);
         double vy = 200;

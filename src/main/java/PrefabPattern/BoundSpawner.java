@@ -8,10 +8,13 @@ import Utils.Settings;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-public class BoundSpawner extends BaseSpawner {
+public class BoundSpawner extends BaseSpawner implements IResetMove{
 
     private double vx;
     private double vy;
+
+    private double Startx;
+    private double Starty;
 
     public BoundSpawner(
             double x,
@@ -31,6 +34,9 @@ public class BoundSpawner extends BaseSpawner {
         super(x, y, visualSize, hitboxPercentage, bulletPool, canHit, sprite, visualSpinSpeed, bulletConfig, bulletPattern, spawnerConfig);
         this.vx = vx;
         this.vy = vy;
+
+        this.Startx = x;
+        this.Starty = y;
     }
 
     public void update(double dt) {
@@ -57,6 +63,13 @@ public class BoundSpawner extends BaseSpawner {
         bulletSpawner.setX(x);
         bulletSpawner.setY(y);
 
+    }
+
+    public void ResetMove(){
+        x = Startx;
+        y = Starty;
+        bulletSpawner.setX(x);
+        bulletSpawner.setY(y);
     }
 
 

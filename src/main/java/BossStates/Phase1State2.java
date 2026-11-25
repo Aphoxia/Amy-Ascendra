@@ -14,11 +14,12 @@ import java.util.List;
 
 public class Phase1State2 implements BossState{
 
-    private final double DURATION = 12;
+    private final double DURATION = 10;
 
     //SPAWNER SETTINGS
     private BaseSpawner ringspawner1;
     private BaseSpawner ringspawner2;
+    private BaseSpawner ringspawner3;
 
     private final List<BaseSpawner> spawners;
     private final List<TimedAction> actions;
@@ -30,16 +31,22 @@ public class Phase1State2 implements BossState{
 
         initSpawner(pool);
 
-        spawners = List.of(ringspawner1,ringspawner2);
+        spawners = List.of(ringspawner1,ringspawner2,ringspawner3);
 
         actions = List.of(
-                new TimedAction(0.0, boss -> boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(250), .5, Interpolator.EASE_OUT)),
+                new TimedAction(0.0, boss -> boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(250), .5, Interpolator.EASE_BOTH)),
 
                 new TimedAction(1, boss -> {
                     ringspawner1.StartSpawn();
                     ringspawner2.StartSpawn();
                 }),
-                new TimedAction(5, boss -> boss.moveToRandom(5))
+                new TimedAction(5, boss -> boss.moveToRandom(2)),
+
+
+
+                new TimedAction(8, boss -> boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(150), 1, Interpolator.EASE_BOTH)),
+
+        new TimedAction(8.5, boss -> ringspawner3.StartSpawn())
 
 
 
@@ -72,6 +79,9 @@ public class Phase1State2 implements BossState{
 
         ringspawner2.setX(boss.getx());
         ringspawner2.setY(boss.gety());
+
+        ringspawner3.setX(boss.getx());
+        ringspawner3.setY(boss.gety());
 
 
         elapsed += dt;
@@ -116,7 +126,20 @@ public class Phase1State2 implements BossState{
 
         ringspawner2 = new BaseSpawner(0,0,32,.5,pool,false,null,1,bulletConfig2,
                 bulletPattern,spawnerConfig2);
-    }
+
+        BulletConfig bulletConfig3 = new BulletConfig(
+                List.of(BulletType.ENEMY_Bullet10,
+                        BulletType.ENEMY_Bullet11,
+                        BulletType.ENEMY_Bullet12),
+                0,250,250,0,0,5,false,false);
+
+        BulletPattern bulletPattern2 = new BulletPattern(20,360);
+        SpawnerConfig spawnerConfig3 = new SpawnerConfig(0,180,0,.1,10,20);
+
+        ringspawner3 = new BaseSpawner(0,0,32,.5,pool,false,null,1,bulletConfig3,
+                bulletPattern2,spawnerConfig3);
+            }
+
 
 
 }

@@ -2,6 +2,7 @@ package Entities;
 
 import PrefabPattern.BaseSpawner;
 import ProjectiesLogic.*;
+import Sound.SoundId;
 import SpriteLoader.BulletType;
 import Utils.Settings;
 import Utils.Utility;
@@ -82,6 +83,8 @@ public class Player extends Entity{
                 null,0,playerbulletConfig,playerBulletPattern,playerSpawnerConfig);
 
         playerbulletspawner1.StartObject();
+
+        playerbulletspawner1.getBulletSpawner().setSoundId(SoundId.PLAYER_SHOT);
     }
 
     @Override
@@ -253,6 +256,10 @@ public class Player extends Entity{
 
     public int getHitpoint(){
         return hitpoint;
+    }
+
+    public double getHitpointPercent(){
+        return ( double)hitpoint / ( double) maxHitPoint;
     }
 
     public double getInvincibleElapse() {

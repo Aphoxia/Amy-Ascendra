@@ -6,7 +6,6 @@ import ProjectiesLogic.*;
 import SpriteLoader.BulletType;
 import Utils.TimedAction;
 import Utils.Utility;
-import javafx.animation.Interpolator;
 import javafx.scene.canvas.GraphicsContext;
 
 
