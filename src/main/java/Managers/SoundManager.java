@@ -78,9 +78,20 @@ public final class SoundManager {
 
         Media media = new Media(resource.toExternalForm());
         musicPlayer = new MediaPlayer(media);
+
+
+        musicPlayer.setOnError(() ->
+                System.err.println("Player error: " + musicPlayer.getError())
+        );
+        musicPlayer.setOnPlaying(() ->
+                System.out.println("Player started")
+        );
+
+
         musicPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         musicPlayer.setVolume(busVolumes.get(SoundBus.MUSIC));
         musicPlayer.play();
+        System.out.println("MMUSIC PLAY SUCCESSFULLY!!!!!!");
     }
 
     public void stopMusic() {

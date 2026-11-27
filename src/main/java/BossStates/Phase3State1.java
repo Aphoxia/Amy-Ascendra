@@ -15,6 +15,8 @@ import javafx.animation.Interpolator;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import System.CollisionSystem;
+import javafx.scene.paint.Color;
+import System.ParticleSystem;
 
 
 import java.util.List;
@@ -189,6 +191,7 @@ public class Phase3State1 implements BossState{
     public void exit(Boss boss) {
         for (BaseSpawner spawner : spawners) {
             spawner.StopSpawn();
+
         }
     }
 
@@ -228,7 +231,7 @@ public class Phase3State1 implements BossState{
 
         BulletConfig config2 = new BulletConfig(
                 List.of( BulletType.ENEMY_Star6),
-                180,75,75,0,0,10,false,true
+                180,75,75,0,0,30,false,true
         );
 
         BulletPattern pattern2 = new BulletPattern( 1, 360);

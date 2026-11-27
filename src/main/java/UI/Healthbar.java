@@ -12,7 +12,7 @@ public class Healthbar {
     public void render(GraphicsContext gc){
         double hitpoint = Boss.instance.getHpPercent();
         double playerhitPoint = Player.Instance.getHitpointPercent();
-        System.out.println(playerhitPoint);
+        //System.out.println(playerhitPoint);
 
         gc.save();
 

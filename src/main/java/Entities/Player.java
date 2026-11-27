@@ -1,9 +1,11 @@
 package Entities;
 
+import Managers.GameManager;
 import PrefabPattern.BaseSpawner;
 import ProjectiesLogic.*;
 import Sound.SoundId;
 import SpriteLoader.BulletType;
+import UI.UltimateBar;
 import Utils.Settings;
 import Utils.Utility;
 import input.KeyBoardInput;
@@ -39,6 +41,7 @@ public class Player extends Entity{
     private boolean focus;
 
     private final double INVINCIBLE_TIME = 1;
+    private final double ULTINVINCIBLE_TIME = 2;
     private double invincibleElapse;
 
     private int maxHitPoint = 30;
@@ -46,6 +49,7 @@ public class Player extends Entity{
 
 
     private final Image[] sprites = new Image[4];
+    private final Image HitboxSprite = loadSprite("Images/Player/Hitbox.png");
     private int spriteIndex = 0;
     private int spriteCounter = 0;
     private int animationSpeed = 30;
@@ -72,6 +76,7 @@ public class Player extends Entity{
         sprites[1] = Utility.loadSprite("Images/Player/AmySpriteAnimation2.png");
         sprites[2] = Utility.loadSprite("Images/Player/AmySpriteAnimation3.png");
         sprites[3] = Utility.loadSprite("Images/Player/AmySpriteAnimation4.png");
+
         left = false;
         right = false;
         up = false;
@@ -123,7 +128,6 @@ public class Player extends Entity{
         }
 
         if (invincibleElapse > 0) {
-            // Flicker every ~0.08 seconds (adjust multiplier to change blink speed)
             boolean visiblePhase = ((int)(invincibleElapse * 15) % 2) == 0;
             gc.setGlobalAlpha((visiblePhase ? 1.0 : 0.3));
         } else {
@@ -134,13 +138,13 @@ public class Player extends Entity{
             }
         }
 
-        double drawX = x - (visualSize / 2);
-        double drawY = y - (visualSize / 2);
+        double drawX = x - (128 / 2);
+        double drawY = y - (128 / 2);
 
         gc.setEffect(dropShadow);
 
 
-        gc.drawImage(sprites[spriteIndex],drawX,drawY);
+        gc.drawImage(sprites[spriteIndex],drawX,drawY,128,128);
             spriteCounter++;
 
             if (spriteCounter >= animationSpeed) {
@@ -162,10 +166,12 @@ public class Player extends Entity{
         if (focus){
             gc.setGlobalAlpha(1);
         double coreSize = (visualSize * hitboxPercentage);
-        double coreX = x - (coreSize / 2);
-        double coreY = y - (coreSize / 2);
-        gc.setFill(Color.RED);
-        gc.fillOval(coreX , coreY, coreSize, coreSize);
+        double coreX = x - 3;
+        double coreY = y - 3;
+
+//        gc.setFill(Color.RED);
+//        gc.fillOval(coreX , coreY, coreSize, coreSize);
+            gc.drawImage(HitboxSprite,coreX,coreY);
     }
         gc.restore();
     }
@@ -225,7 +231,8 @@ public class Player extends Entity{
 
 
     public void resetInvincibleElapse(){
-        this.invincibleElapse = this.INVINCIBLE_TIME;
+
+        this.invincibleElapse  = UltimateBar.Instance.isInUltimate() ? ULTINVINCIBLE_TIME : INVINCIBLE_TIME;
     }
 
     //GETTER SETTER FOR TESTING (WHY I HAVE TO WRITE TEST)

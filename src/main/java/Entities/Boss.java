@@ -76,9 +76,9 @@ public class Boss extends Entity{
                 new Phase3State2(bossbulletPool)
         );
 
-        currentState = new PHASEENTER(bossbulletPool);
+        //urrentState = new PHASEENTER(bossbulletPool);
         //TESTING
-        //currentState = new Phase2State5(bossbulletPool);
+        currentState = new Phase3State1(bossbulletPool);
     }
 
     public void render(GraphicsContext gc){

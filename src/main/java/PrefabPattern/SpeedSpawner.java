@@ -55,10 +55,21 @@ public class SpeedSpawner extends  BaseSpawner implements IResetMove{
 
         double offset = 200;
 
-        if (x < -offset + (640 - 270) ) active = false;
-        if (x > 640 + 270 + offset ) active = false;
-        if (y < -offset ) active = false;
-        if (y > Settings.PlayAreaY  + offset ) active = false;
+        if (x < -offset + (640 - 270) ) {
+            active = false;
+            ResetMove();
+        }
+        if (x > 640 + 270 + offset ) {
+            active = false;
+            ResetMove();}
+        if (y < -offset ) {
+            active = false;
+            ResetMove();
+        }
+        if (y > Settings.PlayAreaY  + offset ) {
+            ResetMove();
+            active = false;
+        }
 
         bulletSpawner.setX(x);
         bulletSpawner.setY(y);

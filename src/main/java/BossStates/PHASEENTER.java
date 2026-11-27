@@ -25,7 +25,7 @@ public class PHASEENTER implements BossState{
         spawners = List.of();
         actions = List.of(
                 new TimedAction(0.0, boss -> boss.moveTo(Utility.shiftCordX(0), Utility.shiftCordY(250), 5, Interpolator.EASE_OUT)),
-                new TimedAction(6, boss -> SoundManager.instance.playMusic("Sound/Music/BossTheme.mp3"))
+                new TimedAction(6, boss -> SoundManager.instance.playMusic("Sound/Music/BossTheme.wav"))
         );
     }
 

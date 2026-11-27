@@ -8,6 +8,7 @@ import Utils.Utility;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import System.ParticleSystem;
 
 public class BaseSpawner extends Entity {
 
@@ -91,7 +92,10 @@ public class BaseSpawner extends Entity {
     public void StopObject() {
         bulletSpawner.stop();
         active = false;
+        ParticleSystem.INSTANCE.flashCircle(x, y,  1);
     }
+
+
 
     public BulletSpawner getBulletSpawner() {
         return bulletSpawner;

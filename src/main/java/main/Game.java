@@ -18,13 +18,16 @@ import System.CollisionSystem;
 import UI.BackGround;
 import UI.Border;
 import UI.Healthbar;
+import UI.UltimateBar;
 import Utils.Settings;
 import Utils.Utility;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Bloom;
+import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
+import System.ParticleSystem;
 
 import java.util.List;
 
@@ -60,12 +63,13 @@ public class Game extends AnimationTimer{
     private int framesThisSecond = 0;
     private int updatesThisSecond = 0;
 
-    private Bloom bloom = new Bloom(.9);
+    private Bloom bloom = new Bloom(.95);
 
     //GRAPHIC
     private BackGround background = new BackGround();
     private Healthbar healthbar = new Healthbar();
     private Border border = new Border();
+    private UltimateBar UltimateBar = new UltimateBar();
 
     //ENTITIES
     private Boss boss = new Boss(Utility.shiftCordX(0), Utility.shiftCordY(800) , 1.25, 32, testBulletPool);
@@ -80,7 +84,7 @@ public class Game extends AnimationTimer{
     private void initClasses(){
 
         playerbulletPool = new BulletPool(1024);
-        player = new Player((float) Settings.HORIZONTAL_RESOLUTION / 2 , (float) Settings.VERTICAL_RESOLUTION * 6 / 8 , 128 , .048 ,playerbulletPool);
+        player = new Player((float) Settings.HORIZONTAL_RESOLUTION / 2 , (float) Settings.VERTICAL_RESOLUTION * 6 / 8 , 128 , .0625 ,playerbulletPool);
         SoundManager.instance.load();
         SoundManager.instance.setBusVolume(SoundBus.MUSIC,1);
 
@@ -88,31 +92,7 @@ public class Game extends AnimationTimer{
 
 
 
-        BulletConfig config1 = new BulletConfig(
-                List.of( BulletType.ENEMY_Star4,
-                        BulletType.ENEMY_Star5,
-                        BulletType.ENEMY_Star6,
-                        BulletType.ENEMY_Star7,
-                        BulletType.ENEMY_Star8),
-                360,75,135,0,0,10,false,false
-        );
 
-        BulletConfig config2 = new BulletConfig(
-                List.of( BulletType.ENEMY_BSTAR1,
-                        BulletType.ENEMY_BSTAR2,
-                        BulletType.ENEMY_BSTAR3,
-                        BulletType.ENEMY_BSTAR4,
-                        BulletType.ENEMY_BSTAR5),
-                360,10,10,60,0,10,false,false
-        );
-
-        BulletPattern pattern1 = new BulletPattern( 25, 360);
-        BulletPattern pattern2 = new BulletPattern( 6, 360);
-        SpawnerConfig spawnerConfig1 = new SpawnerConfig(0 , 240 , 0 , 0, 1, 1);
-        SpawnerConfig spawnerConfig2 = new SpawnerConfig(0 , 80 , 0 , 0, 1, .15);
-
-        test1 = new BaseSpawner(Utility.shiftCordX(0) ,Utility.shiftCordY(0), 60 , .5 , testBulletPool,false , null , 0, config1 , pattern1 , spawnerConfig1);
-        test2 = new BaseSpawner(Utility.shiftCordX(0) ,Utility.shiftCordY(0), 60 , .5 , testBulletPool,false , null , 0, config2 , pattern2, spawnerConfig2);
 
     }
 
@@ -166,7 +146,11 @@ public class Game extends AnimationTimer{
         accumulator = 0.0;
     }
 
+    Bloom bloom1= new Bloom(0);
+    Glow glow1 = new Glow(1);
+
     private void render() {
+        bloom1.setInput(glow1);
         double width = canvas.getWidth();
         double height = canvas.getHeight();
 
@@ -185,6 +169,8 @@ public class Game extends AnimationTimer{
 
         playerbulletPool.renderAll(gc);
         testBulletPool.renderAll(gc);
+        gc.setEffect(bloom1);
+        ParticleSystem.INSTANCE.render(gc);
 
         canvas.setEffect(bloom);
 
@@ -202,31 +188,21 @@ public class Game extends AnimationTimer{
 
         background.update(dt);
 
-
-
         //MANAGER
         GameManager.getInstance().update(dt);
 
         player.update(dt);
         boss.update(dt);
         playerbulletPool.updateAll(dt);
-
-
-        //TEST 1
-
-        //test1.update(dt);
-        //test2.update(dt);
         testBulletPool.updateAll(dt);
-//        testBulletSpawner.update(dt);
-//        testBulletSpawner2.update(dt);
-//        double rad = Math.atan2(player.gety() , player.getx()) ;
-//        //System.out.println(player.gety() + " " + player.getx() + " " + rad);
-//        testBulletSpawner2.setBaseAngle(Math.toDegrees(rad));
 
-        //TEST 2
+        ParticleSystem.INSTANCE.update(dt);
+
         CollisionSystem.CheckPlayerHit(testBulletPool , player);
-
         CollisionSystem.CheckBossHit(playerbulletPool,boss);
+
+        //UI
+        updateUI(dt);
 
 
     }
@@ -237,6 +213,12 @@ public class Game extends AnimationTimer{
     private void renderUI(GraphicsContext gc){
         border.render(gc);
         healthbar.render(gc);
+        UltimateBar.render(gc);
+
+    }
+
+    private void updateUI(double dt){
+        UltimateBar.update(dt);
     }
 
 

@@ -12,6 +12,8 @@ import javafx.animation.Interpolator;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import System.CollisionSystem;
+import javafx.scene.paint.Color;
+import System.ParticleSystem;
 
 
 import java.util.List;
@@ -110,6 +112,8 @@ public class Phase2State5 implements BossState{
     public void exit(Boss boss) {
         for (BaseSpawner spawner : spawners) {
             spawner.StopSpawn();
+            ParticleSystem.INSTANCE.flashCircle(spawner.getx(), spawner.gety(),3);
+
         }
     }
 

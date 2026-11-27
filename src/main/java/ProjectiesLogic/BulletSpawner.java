@@ -4,7 +4,11 @@ import Entities.Player;
 import Managers.SoundManager;
 import Sound.SoundId;
 import Utils.Utility;
+import System.ParticleSystem;
 import javafx.scene.media.AudioClip;
+import javafx.scene.paint.Color;
+
+import java.awt.*;
 import java.net.URL;
 
 public class BulletSpawner{

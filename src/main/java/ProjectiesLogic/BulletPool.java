@@ -4,11 +4,14 @@ package ProjectiesLogic;
 //CHANGE THIS CLASS LATER
 
 import Utils.Settings;
+import Utils.Utility;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import System.ParticleSystem;
 
 public class BulletPool {
 
@@ -85,7 +88,16 @@ public class BulletPool {
 
     public void clearAll(){
         for (Bullet b : activeBullets){
+            if (!b.isActive()) return;
+
+
+
+
             b.setActive(false);
+            if (b.getY() > 720 || b.getY() < 0 || b.getX() < 270 || b.getX() > 810) continue;
+            ParticleSystem.INSTANCE.flashCircle(b.getX(), b.getY(), 1);
+
+
         }
     }
 }
