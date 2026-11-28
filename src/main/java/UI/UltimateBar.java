@@ -73,8 +73,9 @@ public class UltimateBar {
 
 
     public void render(GraphicsContext gc) {
+
         if (!InUltimate) return;
-        double ultelapse = Math.min(1.0, Math.min(UlTtimer, 30.0 - UlTtimer));
+        double ultelapse = Math.min(1.0, Math.min(UlTtimer * 0.5 , 30.0 - UlTtimer));
         double rightX = Utility.easeOutCubic(ultelapse);
         System.out.println(spriteIndex);
         gc.drawImage(UltAnimation[spriteIndex], Settings.HORIZONTAL_RESOLUTION - (300 * rightX), 420, 300, 300);

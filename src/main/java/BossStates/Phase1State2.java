@@ -134,7 +134,7 @@ public class Phase1State2 implements BossState{
                 0,250,250,0,0,5,false,false);
 
         BulletPattern bulletPattern2 = new BulletPattern(20,360);
-        SpawnerConfig spawnerConfig3 = new SpawnerConfig(0,180,0,.1,10,20);
+        SpawnerConfig spawnerConfig3 = new SpawnerConfig(0,30,0,.1,10,20);
 
         ringspawner3 = new BaseSpawner(0,0,32,.5,pool,false,null,1,bulletConfig3,
                 bulletPattern2,spawnerConfig3);

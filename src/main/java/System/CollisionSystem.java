@@ -9,6 +9,7 @@ import PrefabPattern.BaseSpawner;
 import ProjectiesLogic.Bullet;
 import ProjectiesLogic.BulletPool;
 import Sound.SoundId;
+import UI.UltimateBar;
 
 import static Utils.Settings.DEBUG_PLAYER_HIT;
 
@@ -61,8 +62,9 @@ public class CollisionSystem {
 
             if (checkCollisionCircle(boss.getx(), boss.gety(), (boss.getVisualSize() * boss.getHitboxPercentage() / 2), b.getX(), b.getY(), b.getHitboxSize() / 2)) {
                 b.setActive(false);
-                boss.setHp(boss.getHp() - 20);
-                //System.out.println(boss.getHp());
+                int damage = UltimateBar.Instance.isInUltimate() ? 30 : 15;
+                boss.setHp(boss.getHp() - damage);
+
             }
 
 
