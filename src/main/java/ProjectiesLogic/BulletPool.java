@@ -92,9 +92,8 @@ public class BulletPool {
 
 
 
-
             b.setActive(false);
-            if (b.getY() > 720 || b.getY() < 0 || b.getX() < 270 || b.getX() > 810) continue;
+            if (b.getY() > 720 || b.getY() < 0 || b.getX() < 270 || b.getX() > 910) continue;
             ParticleSystem.INSTANCE.flashCircle(b.getX(), b.getY(), 1);
 
 

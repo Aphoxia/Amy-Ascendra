@@ -81,18 +81,21 @@ public class BaseSpawner extends Entity {
     }
 
     public void StartSpawn(){
-        active = true;
+        StartObject();
         bulletSpawner.start();
     }
 
     public void StartObject() {
-        active = true;
+        if (!active) {
+            active = true;
+            if (sprite != null) ParticleSystem.INSTANCE.flashCircle(x, y, 1);
+        }
     }
 
     public void StopObject() {
         bulletSpawner.stop();
         active = false;
-        ParticleSystem.INSTANCE.flashCircle(x, y,  1);
+        if (sprite != null) ParticleSystem.INSTANCE.flashCircle(x, y,  1);
     }
 
 

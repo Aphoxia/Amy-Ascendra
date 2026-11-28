@@ -49,11 +49,11 @@ public class Player extends Entity{
 
 
     private final Image[] sprites = new Image[4];
-    private final Image HitboxSprite = loadSprite("Images/Player/Hitbox.png");
     private int spriteIndex = 0;
     private int spriteCounter = 0;
-    private int animationSpeed = 30;
+    private int animationSpeed = 15;
 
+    private final Image HitboxSprite = loadSprite("Images/Player/Hitbox.png");
 
 
     //Effet

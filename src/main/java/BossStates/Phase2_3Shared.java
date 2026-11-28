@@ -94,7 +94,7 @@ public class Phase2_3Shared implements BossState{
                         BulletType.ENEMY_Bullet12),
                 0,300,300,0,0,5,false,false);
 
-        BulletPattern bulletPattern2 = new BulletPattern(30,360);
+        BulletPattern bulletPattern2 = new BulletPattern(20,360);
         SpawnerConfig spawnerConfig3 = new SpawnerConfig(0,30,0,.1,15,20);
 
         ringspawner3 = new BaseSpawner(0,0,32,.5,pool,false,null,1,bulletConfig3,

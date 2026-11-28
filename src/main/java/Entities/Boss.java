@@ -7,6 +7,7 @@ import Utils.Settings;
 import Utils.Utility;
 import javafx.animation.Interpolator;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 import java.util.List;
@@ -47,6 +48,11 @@ public class Boss extends Entity{
     private double moveDuration, moveElapsed;
     private boolean isMoving;
 
+    private final Image[] sprites = new Image[4];
+    private int spriteIndex = 0;
+    private int spriteCounter = 0;
+    private int animationSpeed = 15;
+
 
 
     public Boss(double x , double y , double hitboxPercentage , double visualSize , BulletPool bossbulletPool){
@@ -57,6 +63,11 @@ public class Boss extends Entity{
         maxHp = Settings.BOSSHP;
         this.bossbulletPool = bossbulletPool;
         phase = Phase.PHASE1;
+
+        sprites[0] = Utility.loadSprite("Images/Boss/ConstellaAnit1.png");
+        sprites[1] = Utility.loadSprite("Images/Boss/ConstellaAnit2.png");
+        sprites[2] = Utility.loadSprite("Images/Boss/ConstellaAnit3.png");
+        sprites[3] = Utility.loadSprite("Images/Boss/ConstellaAnit4.png");
 
         states = List.of(
                 new Phase1State1(bossbulletPool),
@@ -76,17 +87,32 @@ public class Boss extends Entity{
                 new Phase3State2(bossbulletPool)
         );
 
-        //urrentState = new PHASEENTER(bossbulletPool);
+        currentState = new PHASEENTER(bossbulletPool);
         //TESTING
-        currentState = new Phase3State1(bossbulletPool);
+        //currentState = new Phase3State1(bossbulletPool);
     }
 
     public void render(GraphicsContext gc){
 
         gc.save();
 
-        gc.setFill(Color.RED);
-        gc.fillRect(x - 32, y - 32 , 64 , 64);
+        gc.setImageSmoothing(false);
+        //gc.drawImage(sprite,x-96,y-96,192,192);
+
+        gc.drawImage(sprites[spriteIndex],x-96,y-96,192,192);
+        spriteCounter++;
+
+        if (spriteCounter >= animationSpeed) {
+            spriteIndex++;
+
+            // Loop back to the first image (0) after the 4th image (3)
+            if (spriteIndex >= sprites.length) {
+                spriteIndex = 0;
+            }
+
+            spriteCounter = 0; // Reset counter
+
+        }
         currentState.render(gc);
 
         gc.restore();

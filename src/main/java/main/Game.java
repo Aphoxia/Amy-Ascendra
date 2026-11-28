@@ -25,6 +25,7 @@ import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.effect.Bloom;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Glow;
 import javafx.scene.paint.Color;
 import System.ParticleSystem;
@@ -65,6 +66,8 @@ public class Game extends AnimationTimer{
 
     private Bloom bloom = new Bloom(.95);
 
+
+
     //GRAPHIC
     private BackGround background = new BackGround();
     private Healthbar healthbar = new Healthbar();
@@ -72,7 +75,7 @@ public class Game extends AnimationTimer{
     private UltimateBar UltimateBar = new UltimateBar();
 
     //ENTITIES
-    private Boss boss = new Boss(Utility.shiftCordX(0), Utility.shiftCordY(800) , 1.25, 32, testBulletPool);
+    private Boss boss = new Boss(Utility.shiftCordX(0), Utility.shiftCordY(800) , 1.25, 96, testBulletPool);
 
     public Game(Canvas canvas) {
         this.canvas = canvas;
@@ -87,6 +90,9 @@ public class Game extends AnimationTimer{
         player = new Player((float) Settings.HORIZONTAL_RESOLUTION / 2 , (float) Settings.VERTICAL_RESOLUTION * 6 / 8 , 128 , .0625 ,playerbulletPool);
         SoundManager.instance.load();
         SoundManager.instance.setBusVolume(SoundBus.MUSIC,1);
+
+
+
 
 
 
@@ -149,6 +155,11 @@ public class Game extends AnimationTimer{
     Bloom bloom1= new Bloom(0);
     Glow glow1 = new Glow(1);
 
+
+
+
+    Bloom bloom2 = new Bloom(0.4);
+
     private void render() {
         bloom1.setInput(glow1);
         double width = canvas.getWidth();
@@ -167,12 +178,15 @@ public class Game extends AnimationTimer{
         player.render(gc);
         boss.render(gc);
 
+        //gc.setEffect(bloom2);
         playerbulletPool.renderAll(gc);
         testBulletPool.renderAll(gc);
-        gc.setEffect(bloom1);
+
+        //gc.setEffect(bloom1); // THE REASON WHY ITS LAGGY WHEN PRESS ULT ( WRITE THIS SO I DONT FORGET )
         ParticleSystem.INSTANCE.render(gc);
 
         canvas.setEffect(bloom);
+
 
         gc.restore();
 

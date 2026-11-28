@@ -30,7 +30,7 @@ public class UltimateBar {
 
     private int spriteIndex = 0;
     private int spriteCounter = 0;
-    private int animationSpeed = 3;
+    private int animationSpeed = 2;
 
 
 
